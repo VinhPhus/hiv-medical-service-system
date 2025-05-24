@@ -24,7 +24,7 @@ Hệ thống cung cấp đầy đủ thông tin, công cụ quản lý điều t
 
 ---
 
-## ⚙ Chức năng chính
+##  Chức năng chính
 
 - Trang chủ giới thiệu cơ sở y tế, blog chia sẻ, tài liệu giáo dục giảm kỳ thị HIV.
 - Đăng ký lịch khám và điều trị, cho phép chọn bác sĩ.
@@ -73,18 +73,3 @@ Hệ thống cung cấp đầy đủ thông tin, công cụ quản lý điều t
 
 ---
 
-## Cài đặt
-
-```bash
-# Clone repo
-git clone https://github.com/<your-username>/hiv-medical-system.git
-cd hiv-medical-system
-
-# Backend
-cd backend
-./mvnw spring-boot:run
-
-# (Tuỳ chọn) Frontend
-cd frontend
-npm install
-npm run dev
