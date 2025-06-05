@@ -38,8 +38,6 @@ Hệ thống cung cấp đầy đủ thông tin, công cụ quản lý điều t
 
 ---
 ## Yêu cầu chức năng
-# HIV Treatment and Medical Services System
-
 ##  Trang Chủ & Cộng Đồng
 
 - **Thông tin cơ sở**:  
@@ -112,6 +110,9 @@ Hệ thống cung cấp đầy đủ thông tin, công cụ quản lý điều t
 
 >  *Hệ thống được thiết kế nhằm tăng cường khả năng tiếp cận dịch vụ y tế HIV, nâng cao hiệu quả điều trị, và tạo ra môi trường thân thiện – không kỳ thị cho cộng đồng.*
 
+---
+##  Sơ đồ hệ thống 
+![image](https://github.com/user-attachments/assets/31eb88ff-ddb9-4009-a6ec-7fe8d68483ee)<br>
 
 
 ##  Yêu cầu phi chức năng
