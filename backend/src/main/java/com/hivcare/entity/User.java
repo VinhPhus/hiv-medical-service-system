@@ -1,4 +1,4 @@
-package main.java.com.hivcare.entity;
+package com.hivcare.entity;
 
 import com.hivcare.enums.UserRole;
 import com.hivcare.enums.UserStatus;
