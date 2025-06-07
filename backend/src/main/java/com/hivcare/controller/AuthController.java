@@ -1,4 +1,4 @@
-package main.java.com.hivcare.controller;
+package com.hivcare.controller;
 
 import com.hivcare.dto.request.LoginRequest;
 import com.hivcare.dto.request.UserRegistrationRequest;
