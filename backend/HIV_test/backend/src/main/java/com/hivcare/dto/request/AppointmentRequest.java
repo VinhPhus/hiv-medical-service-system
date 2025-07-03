@@ -1,37 +1,72 @@
 package com.hivcare.dto.request;
 
-import jakarta.validation.constraints.Future;
+import com.hivcare.entity.Appointment;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.validation.constraints.Future;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class AppointmentRequest {
     
-    @NotNull(message = "Doctor ID is required")
+    @NotNull
     private Long doctorId;
-    
-    @NotNull(message = "Appointment date is required")
-    @Future(message = "Appointment date must be in the future")
+
+    @NotNull
+    @Future
     private LocalDateTime appointmentDate;
-    
-    @NotNull(message = "Appointment type is required")
-    private String type;
-    
+
+    private Appointment.AppointmentType appointmentType = Appointment.AppointmentType.CONSULTATION;
+
     private String reason;
-    
-    private String notes;
-    
-    @Builder.Default
-    private Boolean isOnline = false;
-    
-    @Builder.Default
-    private Integer durationMinutes = 30;
+
+    private boolean anonymous = false;
+
+    private boolean online = false;
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public LocalDateTime getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDateTime appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public Appointment.AppointmentType getAppointmentType() {
+        return appointmentType;
+    }
+
+    public void setAppointmentType(Appointment.AppointmentType appointmentType) {
+        this.appointmentType = appointmentType;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 }
