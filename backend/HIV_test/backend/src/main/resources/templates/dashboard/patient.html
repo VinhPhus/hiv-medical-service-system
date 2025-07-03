@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title>Bảng điều khiển - Bệnh nhân</title>
+    <!-- CSS riêng cho dashboard -->
+    <link rel="stylesheet" th:href="@{/css/dashboard/dashboard.css}" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="container-fluid">
+        <!-- Thông tin bệnh nhân -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Thông tin bệnh nhân</h3>
+              </div>
+              <div class="card-body">
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                  <span th:text="${error}"></span>
+                </div>
+
+                <div th:if="${patient}">
+                  <p>
+                    <strong>Mã bệnh nhân:</strong>
+                    <span th:text="${patient.patientCode}"></span>
+                  </p>
+                  <p>
+                    <strong>Họ tên:</strong>
+                    <span th:text="${patient.user.fullName}"></span>
+                  </p>
+                  <p>
+                    <strong>Ngày sinh:</strong>
+                    <span
+                      th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"
+                    ></span>
+                  </p>
+                  <p>
+                    <strong>Giới tính:</strong>
+                    <span th:text="${patient.gender}"></span>
+                  </p>
+                  <p>
+                    <strong>Địa chỉ:</strong>
+                    <span th:text="${patient.address}"></span>
+                  </p>
+                  <a
+                    href="/testResult/list"
+                    class="btn btn-outline-primary mt-3"
+                  >
+                    <i class="fas fa-vial me-2"></i>Xem kết quả xét nghiệm
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/dashboard/dashboard.js}"></script>
+    <script src="/js/user.js"></script>
+    <script src="/js/dashboard.js"></script>
+  </body>
+</html>

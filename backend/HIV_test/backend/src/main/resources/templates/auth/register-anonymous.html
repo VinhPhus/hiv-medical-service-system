@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hỗ Trợ Ẩn Danh - HIV Care Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/auth/auth.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+</head>
+<body>
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-6">
+                    <div class="card shadow-sm p-4">
+                        <div class="text-center mb-4">
+                            <div class="rounded-top-4 p-4 pb-2" style="background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%); color: #fff;">
+                                <h2 class="fw-bold mb-1"><i class="fas fa-user-secret me-2"></i>Đăng ký ẩn danh</h2>
+                                <div class="fs-5 mb-1">Bảo vệ quyền riêng tư của bạn</div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info d-flex align-items-center mb-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div><b>Thông tin:</b> Đăng ký ẩn danh cho phép bạn sử dụng dịch vụ mà không cần cung cấp thông tin cá nhân thực tế.</div>
+                        </div>
+                        <div class="alert alert-warning d-flex align-items-center mb-4">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <div><b>Bảo mật:</b> Thông tin của bạn sẽ được mã hóa và bảo vệ theo tiêu chuẩn quốc tế. Chúng tôi cam kết bảo vệ quyền riêng tư của bạn.</div>
+                        </div>
+                        <div class="text-center mb-3">
+                            <a th:href="@{/anonymous-help}" class="btn btn-link text-decoration-underline">
+                                <i class="fas fa-user-secret me-1"></i> Hướng dẫn đăng ký ẩn danh
+                            </a>
+                        </div>
+                        <form id="registerAnonymousForm" th:action="@{/auth/register-anonymous}" method="post" autocomplete="off">
+                            <div th:if="${error}" class="alert alert-danger animate-text" th:text="${error}"></div>
+                            <div class="mb-3">
+                                <label for="anonymousCode" class="form-label">Mã ẩn danh</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="anonymousCode" name="anonymousCode" placeholder="Nhập mã ẩn danh (tùy chọn hoặc hệ thống sinh tự động)"/>
+                                    <button class="btn btn-outline-secondary" type="button" id="generateCodeBtn">
+                                        <i class="fas fa-random me-1"></i> Tạo mã tự động
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="age" class="form-label">Số tuổi</label>
+                                <input type="number" class="form-control" id="age" name="age" placeholder="Nhập số tuổi" min="10" max="100" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="gender" class="form-label">Giới tính</label>
+                                <select class="form-select" id="gender" name="gender" required>
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="MALE">Nam</option>
+                                    <option value="FEMALE">Nữ</option>
+                                    <option value="OTHER">Khác</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 form-group" style="position:relative;">
+                                <label for="password" class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Tạo mật khẩu" required minlength="6"/>
+                                <span class="password-toggle" tabindex="0" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;">
+                                    <i class="fas fa-eye-slash"></i>
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required/>
+                            </div>
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-danger btn-lg" id="registerAnonymousBtn">
+                                    <i class="fas fa-user-secret me-2"></i>Đăng ký Ẩn Danh
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <a th:href="@{/auth/login}" class="small">Đã có tài khoản? Đăng nhập</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/auth.js}"></script>
+</body>
+</html>

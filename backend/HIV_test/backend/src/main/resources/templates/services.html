@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch Vụ Y Tế - HIV Care Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .service-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+            margin-bottom: 2rem;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #dc3545;
+        }
+        
+        .service-header {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+            padding: 6rem 0;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .service-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .service-header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        
+        .service-content {
+            padding: 2rem;
+        }
+        
+        .service-price {
+            font-size: 1.25rem;
+            color: #dc3545;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+        
+        .service-features li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .service-features li:before {
+            content: "✓";
+            color: #28a745;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header Section -->
+        <div class="service-header">
+            <div class="container">
+                <h1>Dịch Vụ Của Chúng Tôi</h1>
+                <p>Chăm sóc toàn diện, chuyên nghiệp và bảo mật</p>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="container py-5">
+            <div class="row">
+                <!-- Tư vấn và Điều trị ARV -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <h3>Tư vấn và Điều trị ARV</h3>
+                            <p>Phác đồ điều trị cá nhân hóa với thuốc ARV hiện đại</p>
+                            <div class="service-price">Từ 500.000đ</div>
+                            <ul class="service-features">
+                                <li>Tư vấn chuyên sâu về điều trị</li>
+                                <li>Phác đồ điều trị cá nhân hóa</li>
+                                <li>Theo dõi tiến trình điều trị</li>
+                                <li>Hỗ trợ tâm lý</li>
+                            </ul>
+                            <a th:href="@{/appointments/create}" class="btn btn-primary">Đặt lịch tư vấn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Xét nghiệm HIV -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <h3>Xét nghiệm HIV</h3>
+                            <p>Xét nghiệm nhanh, chính xác với công nghệ hiện đại</p>
+                            <div class="service-price">Từ 200.000đ</div>
+                            <ul class="service-features">
+                                <li>Xét nghiệm nhanh trong 20 phút</li>
+                                <li>Xét nghiệm khẳng định Western Blot</li>
+                                <li>Đo tải lượng virus</li>
+                                <li>Xét nghiệm CD4</li>
+                            </ul>
+                            <a th:href="@{/appointments/create}" class="btn btn-primary">Đặt lịch xét nghiệm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tư vấn tâm lý -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3>Tư vấn tâm lý</h3>
+                            <p>Hỗ trợ tâm lý chuyên sâu từ các chuyên gia</p>
+                            <div class="service-price">Từ 300.000đ</div>
+                            <ul class="service-features">
+                                <li>Tư vấn cá nhân</li>
+                                <li>Tư vấn nhóm</li>
+                                <li>Hỗ trợ gia đình</li>
+                                <li>Kỹ năng sống tích cực</li>
+                            </ul>
+                            <a th:href="@{/appointments/create}" class="btn btn-primary">Đặt lịch tư vấn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theo dõi điều trị -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>Theo dõi điều trị</h3>
+                            <p>Giám sát và đánh giá hiệu quả điều trị</p>
+                            <div class="service-price">Từ 400.000đ</div>
+                            <ul class="service-features">
+                                <li>Đánh giá định kỳ</li>
+                                <li>Theo dõi tác dụng phụ</li>
+                                <li>Điều chỉnh phác đồ</li>
+                                <li>Báo cáo chi tiết</li>
+                            </ul>
+                            <a th:href="@{/appointments/create}" class="btn btn-primary">Đặt lịch khám</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tư vấn dinh dưỡng -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-apple-alt"></i>
+                            </div>
+                            <h3>Tư vấn dinh dưỡng</h3>
+                            <p>Chế độ dinh dưỡng phù hợp cho người nhiễm HIV</p>
+                            <div class="service-price">Từ 250.000đ</div>
+                            <ul class="service-features">
+                                <li>Đánh giá tình trạng dinh dưỡng</li>
+                                <li>Lập kế hoạch dinh dưỡng</li>
+                                <li>Tư vấn chế độ ăn</li>
+                                <li>Theo dõi cân nặng</li>
+                            </ul>
+                            <a th:href="@{/appointments/create}" class="btn btn-primary">Đặt lịch tư vấn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hỗ trợ xã hội -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card">
+                        <div class="service-content text-center">
+                            <div class="service-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h3>Hỗ trợ xã hội</h3>
+                            <p>Kết nối và hỗ trợ cộng đồng</p>
+                            <div class="service-price">Miễn phí</div>
+                            <ul class="service-features">
+                                <li>Kết nối nhóm hỗ trợ</li>
+                                <li>Tư vấn việc làm</li>
+                                <li>Hỗ trợ pháp lý</li>
+                                <li>Giới thiệu dịch vụ xã hội</li>
+                            </ul>
+                            <a th:href="@{/contact}" class="btn btn-primary">Liên hệ hỗ trợ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

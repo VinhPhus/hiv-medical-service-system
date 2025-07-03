@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title>Bảng điều khiển - Quản trị viên</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <th:block layout:fragment="css">
+      <link rel="stylesheet" th:href="@{/css/dashboard/dashboard.css}">
+    </th:block>
+
+    <th:block layout:fragment="content">
+      <!-- Main Content -->
+      <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard Admin
+          </h1>
+          <p class="page-subtitle">Tổng quan hệ thống quản lý HIV Care</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+          <!-- Thẻ: Tổng số người dùng -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--primary-color);">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stats-number" th:text="${totalUsers ?: '0'}">0</div>
+              <div class="stats-label">Tổng người dùng</div>
+            </div>
+          </div>
+
+          <!-- Thẻ: Tổng số bác sĩ -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--success-color);">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="stats-number" th:text="${totalDoctors ?: '0'}">0</div>
+              <div class="stats-label">Bác sĩ hoạt động</div>
+              <a th:href="@{/admin/doctors}" class="btn btn-outline-success mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Tổng số bệnh nhân -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--info-color);">
+                <i class="fas fa-user-injured"></i>
+              </div>
+              <div class="stats-number" th:text="${totalPatients ?: '0'}">0</div>
+              <div class="stats-label">Tổng bệnh nhân</div>
+              <a th:href="@{/patient/list}" class="btn btn-outline-info mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Tổng số nhân viên -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--warning-color);">
+                <i class="fas fa-user-nurse"></i>
+              </div>
+              <div class="stats-number" th:text="${totalStaff ?: '0'}">0</div>
+              <div class="stats-label">Nhân viên</div>
+              <a th:href="@{/admin/staff}" class="btn btn-outline-warning mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Quick Actions -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-bolt me-2"></i>Các Chức Năng
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="d-grid gap-2">
+                  <a th:href="@{/admin/add-manager}" class="btn btn-outline-primary">
+                    <i class="fas fa-user-tie me-2"></i>Thêm quản lý
+                  </a>
+                  <a th:href="@{/admin/add-doctor}" class="btn btn-outline-success">
+                    <i class="fas fa-user-md me-2"></i>Thêm bác sĩ
+                  </a>
+                  <a th:href="@{/admin/add-staff}" class="btn btn-outline-info">
+                    <i class="fas fa-user-nurse me-2"></i>Thêm nhân viên
+                  </a>
+                  <a th:href="@{/appointment/form}" class="btn btn-outline-secondary">
+                    <i class="fas fa-calendar-plus me-2"></i>Thêm lịch hẹn
+                  </a>
+                  <a th:href="@{/medicalRecord/form}" class="btn btn-outline-dark">
+                    <i class="fas fa-file-medical me-2"></i>Thêm hồ sơ y tế
+                  </a>
+                  <a th:href="@{/admin/reports}" class="btn btn-outline-warning">
+                    <i class="fas fa-chart-line me-2"></i>Xem báo cáo
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Appointments -->
+          <div class="col-md-8 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-calendar-check me-2"></i>Lịch Hẹn Gần Đây
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Bệnh nhân</th>
+                        <th>Bác sĩ</th>
+                        <th>Ngày giờ</th>
+                        <th>Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="appointment : ${recentAppointments}">
+                        <td th:text="${appointment.id}">1</td>
+                        <td th:text="${appointment.patient.fullName}">Nguyễn Văn A</td>
+                        <td th:text="${appointment.doctor.fullName}">Bs. Trần B</td>
+                        <td th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}">01/01/2024 09:00</td>
+                        <td>
+                          <span th:class="${'badge ' + (appointment.status == 'PENDING' ? 'bg-warning' : 
+                                                      appointment.status == 'CONFIRMED' ? 'bg-success' : 
+                                                      appointment.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                th:text="${appointment.status}">PENDING</span>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(recentAppointments)}">
+                        <td colspan="5" class="text-center">Không có lịch hẹn nào</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/dashboard/dashboard.js}"></script>
+    </th:block>
+  </body>
+</html>

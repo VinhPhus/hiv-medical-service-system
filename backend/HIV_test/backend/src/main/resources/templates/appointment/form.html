@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title
+      th:text="${appointment.id != null ? 'Chỉnh sửa lịch hẹn' : 'Tạo lịch hẹn mới'}"
+    >
+      Lịch hẹn
+    </title>
+    <link rel="stylesheet" th:href="@{/css/appointment/appointment.css}" />
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div class="appointment-container">
+        <!-- Header -->
+        <div class="appointment-header">
+          <div class="container">
+            <h1
+              th:text="${appointment.id != null ? 'Chỉnh sửa lịch hẹn' : 'Tạo lịch hẹn mới'}"
+            >
+              Lịch hẹn
+            </h1>
+            <p>Vui lòng điền đầy đủ thông tin bên dưới</p>
+          </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="container">
+          <div class="appointment-card">
+            <div class="card-header">
+              <i class="fas fa-calendar-plus me-2"></i>
+              Thông tin lịch hẹn
+            </div>
+            <div class="card-body">
+              <!-- Success message -->
+              <div
+                th:if="${success}"
+                class="alert alert-success alert-dismissible fade show"
+                role="alert"
+              >
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}">Thành công</span>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
+
+              <!-- Error message -->
+              <div
+                th:if="${error}"
+                class="alert alert-danger alert-dismissible fade show"
+                role="alert"
+              >
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}">Lỗi</span>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
+
+              <form
+                th:action="@{/appointment/save}"
+                th:object="${appointment}"
+                method="post"
+                id="appointmentForm"
+              >
+                <!-- CSRF token -->
+                <input
+                  type="hidden"
+                  th:name="${_csrf.parameterName}"
+                  th:value="${_csrf.token}"
+                />
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Patient Information -->
+                <div class="row mb-4">
+                  <div class="col-md-6">
+                    <label class="appointment-form-label">Bệnh nhân</label>
+                    <select
+                      class="appointment-form-control"
+                      name="patient.id"
+                      required
+                    >
+                      <option value="">Chọn bệnh nhân</option>
+                      <option
+                        th:each="patient : ${patients}"
+                        th:value="${patient.id}"
+                        th:text="${patient.user != null ? patient.user.fullName : patient.patientCode}"
+                        th:selected="${appointment.patient != null and appointment.patient.id == patient.id}"
+                      ></option>
+                    </select>
+                    <div class="invalid-feedback">Vui lòng chọn bệnh nhân</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="appointment-form-label">Bác sĩ</label>
+                    <select
+                      class="appointment-form-control"
+                      name="doctor.id"
+                      required
+                    >
+                      <option value="">Chọn bác sĩ</option>
+                      <option
+                        th:each="doctor : ${doctors}"
+                        th:value="${doctor.id}"
+                        th:text="${doctor.user != null ? doctor.user.fullName : doctor.doctorCode}"
+                        th:selected="${appointment.doctor != null and appointment.doctor.id == doctor.id}"
+                      ></option>
+                    </select>
+                    <div class="invalid-feedback">Vui lòng chọn bác sĩ</div>
+                  </div>
+                </div>
+
+                <!-- Appointment Details -->
+                <div class="row mb-4">
+                  <div class="col-md-4">
+                    <label class="appointment-form-label">Ngày hẹn</label>
+                    <input
+                      type="date"
+                      class="appointment-form-control"
+                      name="appointmentDateOnly"
+                      th:value="${appointment.appointmentDate != null ? #temporals.format(appointment.appointmentDate, 'yyyy-MM-dd') : ''}"
+                      required
+                      th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                    />
+                    <div class="invalid-feedback">
+                      Vui lòng chọn ngày hẹn hợp lệ
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="appointment-form-label">Giờ hẹn</label>
+                    <input
+                      type="time"
+                      class="appointment-form-control"
+                      name="appointmentTimeOnly"
+                      th:value="${appointment.appointmentDate != null ? #temporals.format(appointment.appointmentDate, 'HH:mm') : ''}"
+                      required
+                      min="08:00"
+                      max="17:00"
+                    />
+                    <div class="invalid-feedback">
+                      Vui lòng chọn giờ hẹn trong khoảng 8:00 - 17:00
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="appointment-form-label">Loại lịch hẹn</label>
+                    <select
+                      class="appointment-form-control"
+                      th:field="*{appointmentType}"
+                      required
+                    >
+                      <option value="">Chọn loại lịch hẹn</option>
+                      <option
+                        th:each="type : ${T(com.hivcare.entity.Appointment.AppointmentType).values()}"
+                        th:value="${type}"
+                        th:text="${type.name()}"
+                        th:selected="${appointment.appointmentType == type}"
+                      ></option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Vui lòng chọn loại lịch hẹn
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-4">
+                  <label class="appointment-form-label">Ghi chú</label>
+                  <textarea
+                    class="appointment-form-control"
+                    th:field="*{notes}"
+                    rows="4"
+                    placeholder="Nhập ghi chú về lịch hẹn (nếu có)"
+                  ></textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-4" th:if="${appointment.id != null}">
+                  <label class="appointment-form-label">Trạng thái</label>
+                  <select class="appointment-form-control" th:field="*{status}">
+                    <option
+                      th:each="status : ${T(com.hivcare.entity.Appointment.AppointmentStatus).values()}"
+                      th:value="${status}"
+                      th:text="${status.name()}"
+                      th:selected="${appointment.status == status}"
+                    ></option>
+                  </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                  <a
+                    th:href="@{/appointment/list}"
+                    class="btn btn-appointment btn-appointment-secondary"
+                  >
+                    <i class="fas fa-times me-2"></i>Hủy
+                  </a>
+                  <button
+                    type="submit"
+                    class="btn btn-appointment btn-appointment-primary"
+                  >
+                    <i class="fas fa-save me-2"></i>Lưu
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/appointment/appointment.js}"></script>
+    </th:block>
+  </body>
+</html>

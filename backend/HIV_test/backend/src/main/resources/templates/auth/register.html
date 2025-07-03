@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Đăng Ký</title>
+    <link th:href="@{/css/auth/auth.css}" rel="stylesheet" />
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7">
+                    <div class="card shadow-sm p-4">
+                        <div class="text-center mb-4">
+                            <div class="rounded-top-4 p-4 pb-2" style="background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%); color: #fff;">
+                                <h2 class="fw-bold mb-1"><i class="fas fa-user-plus me-2"></i>Đăng Ký Tài Khoản</h2>
+                                <p class="text-white-50 mb-0">Đăng ký tài khoản để sử dụng dịch vụ</p>
+                            </div>
+                        </div>
+                        <form id="registerForm" th:action="@{/auth/register}" method="post" autocomplete="off" th:object="${signupRequest}">
+                            <div th:if="${error}" class="alert alert-danger animate-text" th:text="${error}"></div>
+                            <!-- Thông tin cá nhân -->
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" th:field="*{fullName}" id="fullName" placeholder="Nhập họ và tên" required/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" th:field="*{dateOfBirth}" id="dateOfBirth" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Giới tính</label>
+                                    <select class="form-select" th:field="*{gender}" id="gender" required>
+                                        <option value="">Chọn giới tính</option>
+                                        <option value="MALE">Nam</option>
+                                        <option value="FEMALE">Nữ</option>
+                                        <option value="OTHER">Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Thông tin liên hệ -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="Nhập email của bạn" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" th:field="*{phoneNumber}" id="phoneNumber" placeholder="Nhập số điện thoại" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" th:field="*{address}" id="address" rows="3" placeholder="Nhập địa chỉ"></textarea>
+                            </div>
+                            <!-- Thông tin tài khoản -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" th:field="*{username}" id="username" placeholder="Tạo tên đăng nhập" required/>
+                            </div>
+                            <div class="mb-3 form-group" style="position:relative;">
+                                <label for="password" class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" th:field="*{password}" id="password" placeholder="Tạo mật khẩu" required minlength="6"/>
+                                <span class="password-toggle" tabindex="0" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;">
+                                    <i class="fas fa-eye-slash"></i>
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required/>
+                            </div>
+                            <!-- Hidden role field -->
+                            <input type="hidden" th:field="*{role}" value="PATIENT"/>
+                            <!-- Điều khoản -->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    Tôi đồng ý với <a th:href="@{/privacy-policy}" class="text-primary" target="_blank">Chính sách bảo mật</a>
+                                </label>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeNewsletter" name="agreeNewsletter">
+                                <label class="form-check-label" for="agreeNewsletter">
+                                    Tôi muốn nhận thông tin cập nhật và tin tức qua email
+                                </label>
+                            </div>
+                            <!-- Nút Đăng ký -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-danger btn-lg" id="registerBtn"><i class="fas fa-user-plus me-2"></i>Đăng ký</button>
+                            </div>
+                            <div class="text-center">
+                                <a th:href="@{/auth/login}" class="small">Đã có tài khoản? Đăng nhập</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/auth.js}"></script>
+    </th:block>
+</body>
+</html>

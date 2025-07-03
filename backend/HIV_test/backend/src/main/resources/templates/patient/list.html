@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Danh sách Bệnh nhân</title>
+    <link th:href="@{/css/patient/patient.css}" rel="stylesheet" />
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container my-5">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="page-title">
+                        <i class="fas fa-users me-2"></i>Danh sách bệnh nhân
+                    </h1>
+                    <p class="page-subtitle">Quản lý thông tin bệnh nhân trong hệ thống</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a th:href="@{/patient/new}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Thêm bệnh nhân
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" th:text="${totalPatients}">0</div>
+                    <div class="stats-label">Tổng bệnh nhân</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" th:text="${activePatients}">0</div>
+                    <div class="stats-label">Đang điều trị</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" th:text="${newPatients}">0</div>
+                    <div class="stats-label">Bệnh nhân mới</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" th:text="${completedPatients}">0</div>
+                    <div class="stats-label">Hoàn thành điều trị</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section">
+            <form th:action="@{/patient/list}" method="get" class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="searchInput" class="form-label">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control" 
+                               id="searchInput" 
+                               name="search"
+                               th:value="${search}"
+                               placeholder="Tìm theo tên, mã BN, số điện thoại..." />
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="treatmentStatusFilter" class="form-label">Trạng thái điều trị</label>
+                    <select class="form-select" 
+                            id="treatmentStatusFilter" 
+                            name="treatmentStatus">
+                        <option value="">Tất cả trạng thái</option>
+                        <option th:each="status : ${treatmentStatuses}"
+                                th:value="${status}"
+                                th:text="${status == T(com.hivcare.entity.Patient.TreatmentStatus).ACTIVE ? 'Đang điều trị' : 
+                                        (status == T(com.hivcare.entity.Patient.TreatmentStatus).COMPLETED ? 'Hoàn thành' :
+                                        (status == T(com.hivcare.entity.Patient.TreatmentStatus).PAUSED ? 'Tạm dừng' :
+                                        (status == T(com.hivcare.entity.Patient.TreatmentStatus).DISCONTINUED ? 'Ngừng điều trị' :
+                                        (status == T(com.hivcare.entity.Patient.TreatmentStatus).TRANSFERRED ? 'Đã chuyển' : 'Đã mất'))))}">
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="statusFilter" class="form-label">Trạng thái</label>
+                    <select class="form-select" 
+                            id="statusFilter" 
+                            name="status">
+                        <option value="">Tất cả trạng thái</option>
+                        <option th:each="status : ${statuses}"
+                                th:value="${status}"
+                                th:text="${status == T(com.hivcare.entity.Patient.Status).ACTIVE ? 'Đang hoạt động' : 
+                                        (status == T(com.hivcare.entity.Patient.Status).INACTIVE ? 'Không hoạt động' :
+                                        (status == T(com.hivcare.entity.Patient.Status).TRANSFERRED ? 'Đã chuyển' : 'Đã mất'))}">
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-2"></i>Lọc
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Patient List -->
+        <div class="patient-list">
+            <!-- Hiển thị thông báo nếu có -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Danh sách bệnh nhân -->
+            <div th:if="${patients != null and !patients.empty}">
+                <div th:each="patient : ${patients}" class="patient-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-1 text-center">
+                            <div class="patient-avatar" th:text="${#strings.substring(patient.user.fullName, 0, 2)}">
+                                NA
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="patient-name" th:text="${patient.user.fullName}">Nguyễn Văn A</div>
+                            <div class="patient-id" th:text="'Mã BN: ' + ${patient.patientCode}">Mã BN: P001</div>
+                            <div class="patient-info">
+                                <div class="info-item">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    <span th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}">01/01/1990</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-venus-mars"></i>
+                                    <span th:text="${patient.gender == T(com.hivcare.entity.User.Gender).MALE ? 'Nam' : (patient.gender == T(com.hivcare.entity.User.Gender).FEMALE ? 'Nữ' : 'Khác')}">Nam</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="patient-info">
+                                <div class="info-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span th:text="${patient.user.phone}">0123456789</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span th:text="${patient.user.email}">email@example.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-2">
+                                <span th:class="'status-badge status-' + ${#strings.toLowerCase(patient.treatmentStatus)}"
+                                      th:text="${patient.treatmentStatus == T(com.hivcare.entity.Patient.TreatmentStatus).ACTIVE ? 'Đang điều trị' : 
+                                              (patient.treatmentStatus == T(com.hivcare.entity.Patient.TreatmentStatus).COMPLETED ? 'Hoàn thành' :
+                                              (patient.treatmentStatus == T(com.hivcare.entity.Patient.TreatmentStatus).PAUSED ? 'Tạm dừng' :
+                                              (patient.treatmentStatus == T(com.hivcare.entity.Patient.TreatmentStatus).DISCONTINUED ? 'Ngừng điều trị' :
+                                              (patient.treatmentStatus == T(com.hivcare.entity.Patient.TreatmentStatus).TRANSFERRED ? 'Đã chuyển' : 'Đã mất'))))}">
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="'Bắt đầu: ' + ${#temporals.format(patient.treatmentStartDate, 'dd/MM/yyyy')}">01/01/2024</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="action-buttons">
+                                <a th:href="@{/patient/{id}(id=${patient.id})}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/patient/{id}/edit(id=${patient.id})}" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger"
+                                        th:onclick="'deletePatient(' + ${patient.id} + ')'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông báo không có dữ liệu -->
+            <div th:if="${patients == null or patients.empty}" class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Không có bệnh nhân nào.
+            </div>
+
+            <!-- Phân trang -->
+            <nav th:if="${patients != null and !patients.empty}" aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/patient/list(page=${currentPage - 1}, size=${patients.size}, search=${search}, treatmentStatus=${treatmentStatus}, status=${status})}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${pageNum == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/patient/list(page=${pageNum}, size=${patients.size}, search=${search}, treatmentStatus=${treatmentStatus}, status=${status})}" 
+                           th:text="${pageNum + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/patient/list(page=${currentPage + 1}, size=${patients.size}, search=${search}, treatmentStatus=${treatmentStatus}, status=${status})}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa bệnh nhân này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        function deletePatient(id) {
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            const confirmButton = document.getElementById('confirmDelete');
+            
+            confirmButton.onclick = function() {
+                fetch(`/api/patients/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        throw new Error('Có lỗi xảy ra khi xóa bệnh nhân');
+                    }
+                })
+                .catch(error => {
+                    alert(error.message);
+                })
+                .finally(() => {
+                    modal.hide();
+                });
+            };
+            
+            modal.show();
+        }
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Danh sách phác đồ ARV - HIV Care Management</title>
+    <link rel="stylesheet" th:href="@{/css/arvProtocol/arvProtocol.css}">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h1 class="page-title">Phác đồ ARV</h1>
+                            <p class="page-subtitle">Quản lý các phác đồ điều trị ARV</p>
+                        </div>
+                        <div class="col-auto" th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''MANAGER'')')}">
+                            <a href="/arvProtocol/form" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Thêm phác đồ mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${totalProtocols}">0</div>
+                            <div class="stats-label">Tổng số phác đồ</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${activeProtocols}">0</div>
+                            <div class="stats-label">Phác đồ đang sử dụng</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${inactiveProtocols}">0</div>
+                            <div class="stats-label">Phác đồ ngưng sử dụng</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Filter Section -->
+                <div class="search-filter-section">
+                    <form id="search-form" class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="search-input" class="form-label">Tìm kiếm</label>
+                                <input type="text" class="form-control" id="search-input" 
+                                       placeholder="Tìm theo tên hoặc mã phác đồ...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="category-filter" class="form-label">Đối tượng</label>
+                                <select class="form-select" id="category-filter">
+                                    <option value="">Tất cả</option>
+                                    <option value="ADULT">Người lớn</option>
+                                    <option value="CHILD">Trẻ em</option>
+                                    <option value="PREGNANT">Phụ nữ mang thai</option>
+                                    <option value="SPECIAL">Đối tượng đặc biệt</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="status-filter" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="status-filter">
+                                    <option value="">Tất cả</option>
+                                    <option value="true">Đang sử dụng</option>
+                                    <option value="false">Ngưng sử dụng</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="sort-select" class="form-label">Sắp xếp</label>
+                                <select class="form-select" id="sort-select">
+                                    <option value="createdAt,desc">Mới nhất</option>
+                                    <option value="createdAt,asc">Cũ nhất</option>
+                                    <option value="name,asc">Tên A-Z</option>
+                                    <option value="name,desc">Tên Z-A</option>
+                                    <option value="code,asc">Mã tăng dần</option>
+                                    <option value="code,desc">Mã giảm dần</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Protocol List -->
+                <div id="protocol-list">
+                    <!-- Protocol cards will be loaded here by JavaScript -->
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul id="pagination" class="pagination">
+                        <!-- Pagination will be loaded here by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/arvProtocol.js}"></script>
+    </th:block>
+</body>
+</html>

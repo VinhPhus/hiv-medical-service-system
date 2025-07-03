@@ -1,0 +1,106 @@
+:root {
+            --primary-color: #dc3545;
+            --primary-hover: #c82333;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--light-bg);
+        }
+
+        .contact-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #e74c3c 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .contact-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .feature-icon {
+            color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .working-hours-card {
+            border-radius: 1.2rem;
+            border: 2px solid var(--border-color);
+            background: linear-gradient(135deg, #fafdff 60%, #e7f1ff 100%);
+            box-shadow: 0 2px 16px rgba(220, 53, 69, 0.06);
+            margin-top: 2rem;
+            padding: 2rem 1.5rem;
+        }
+        
+        .working-hours-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #222 !important;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .working-hours-list {
+            font-size: 1.1rem;
+            margin-bottom: 0;
+            color: #222 !important;
+        }
+        
+        .working-hours-list li {
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            color: #222 !important;
+        }
+        
+        .working-hours-list .fa-clock {
+            color: var(--primary-color);
+            margin-right: 0.7rem;
+        }
+        
+        .working-hours-note {
+            background: #fff6f6;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem 1.2rem;
+            border-radius: 0.7rem;
+            color: #b02a37;
+            font-size: 1rem;
+            margin-top: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .working-hours-card {
+                padding: 1rem 0.5rem;
+            }
+        }

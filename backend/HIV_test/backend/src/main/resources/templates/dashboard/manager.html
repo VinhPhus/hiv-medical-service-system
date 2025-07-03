@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title>Bảng điều khiển - Quản lý</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <th:block layout:fragment="css">
+      <link rel="stylesheet" th:href="@{/css/dashboard/dashboard.css}">
+    </th:block>
+
+    <th:block layout:fragment="content">
+      <!-- Main Content -->
+      <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard Quản lý
+          </h1>
+          <p class="page-subtitle">Tổng quan hoạt động của trung tâm HIV Care</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+          <!-- Thẻ: Tổng số bệnh nhân -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--primary-color);">
+                <i class="fas fa-user-injured"></i>
+              </div>
+              <div class="stats-number" th:text="${totalPatients ?: '0'}">0</div>
+              <div class="stats-label">Tổng bệnh nhân</div>
+              <a th:href="@{/patient/list}" class="btn btn-outline-primary mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Tổng số bác sĩ -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--success-color);">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="stats-number" th:text="${totalDoctors ?: '0'}">0</div>
+              <div class="stats-label">Bác sĩ hoạt động</div>
+              <a th:href="@{/doctor/list}" class="btn btn-outline-success mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Lịch hẹn hôm nay -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--info-color);">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="stats-number" th:text="${#lists.size(todayAppointments)}">0</div>
+              <div class="stats-label">Lịch hẹn hôm nay</div>
+              <a th:href="@{/appointment/list}" class="btn btn-outline-info mt-3 w-100">Xem lịch hẹn</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Xét nghiệm tháng này -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--warning-color);">
+                <i class="fas fa-vials"></i>
+              </div>
+              <div class="stats-number" th:text="${#lists.size(monthlyTests)}">0</div>
+              <div class="stats-label">Xét nghiệm tháng này</div>
+              <a th:href="@{/test-result/list}" class="btn btn-outline-warning mt-3 w-100">Xem kết quả</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Quick Actions -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-bolt me-2"></i>Các Chức Năng
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="d-grid gap-2">
+                  <a th:href="@{/patient/form}" class="btn btn-outline-primary">
+                    <i class="fas fa-user-plus me-2"></i>Thêm bệnh nhân
+                  </a>
+                  <a th:href="@{/appointment/form}" class="btn btn-outline-success">
+                    <i class="fas fa-calendar-plus me-2"></i>Thêm lịch hẹn
+                  </a>
+                  <a th:href="@{/test-result/form}" class="btn btn-outline-info">
+                    <i class="fas fa-vial me-2"></i>Thêm xét nghiệm
+                  </a>
+                  <a th:href="@{/medicalRecord/form}" class="btn btn-outline-dark">
+                    <i class="fas fa-file-medical me-2"></i>Thêm hồ sơ y tế
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Appointments -->
+          <div class="col-md-8 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-calendar-check me-2"></i>Lịch Hẹn Hôm Nay
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Thời gian</th>
+                        <th>Bệnh nhân</th>
+                        <th>Bác sĩ</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="appt : ${todayAppointments}">
+                        <td th:text="${#temporals.format(appt.appointmentTime, 'HH:mm')}">14:30</td>
+                        <td th:text="${appt.patient.fullName}">Nguyễn Văn A</td>
+                        <td th:text="${appt.doctor.fullName}">Bs. Trần B</td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info" th:text="${appt.type}">KHÁM BỆNH</span>
+                        </td>
+                        <td>
+                          <span th:class="${'badge ' + (appt.status == 'PENDING' ? 'bg-warning' : 
+                                                      appt.status == 'CONFIRMED' ? 'bg-success' : 
+                                                      appt.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                th:text="${appt.status}">PENDING</span>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(todayAppointments)}">
+                        <td colspan="5" class="text-center">Không có lịch hẹn nào hôm nay</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/dashboard/dashboard.js}"></script>
+    </th:block>
+  </body>
+</html>

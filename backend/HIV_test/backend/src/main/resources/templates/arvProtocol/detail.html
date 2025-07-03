@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html}">
+<head>
+    <title th:text="${arvProtocol.code + ' - Chi tiết phác đồ ARV - HIV Care Management'}">Chi tiết phác đồ ARV</title>
+    <link th:href="@{/css/arvProtocol.css}" rel="stylesheet" />
+</head>
+<body>
+<main th:fragment="content" class="main-content detail-arv-protocol">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="page-title">
+                        <i class="fas fa-pills me-2"></i>Chi tiết phác đồ ARV
+                    </h1>
+                    <p class="page-subtitle" th:text="${arvProtocol.code + ' - ' + arvProtocol.patientName}">AP001 - Nguyễn Văn An</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-primary me-2" onclick="editProtocol()">
+                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                    </button>
+                    <button class="btn btn-outline-success me-2" onclick="downloadProtocol()">
+                        <i class="fas fa-download me-2"></i>Tải xuống
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="deleteProtocol()">
+                        <i class="fas fa-trash me-2"></i>Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Basic Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-id-card info-icon"></i>Mã phác đồ:</div>
+                            <div class="info-value" th:text="${arvProtocol.code}">AP001</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-user info-icon"></i>Bệnh nhân:</div>
+                            <div class="info-value" th:text="${arvProtocol.patientName + ' (' + arvProtocol.patientCode + ')'}">Nguyễn Văn An (P001)</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-birthday-cake info-icon"></i>Tuổi:</div>
+                            <div class="info-value" th:text="${arvProtocol.patientAge}">35 tuổi</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-venus-mars info-icon"></i>Giới tính:</div>
+                            <div class="info-value" th:text="${arvProtocol.patientGender}">Nam</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-calendar info-icon"></i>Ngày bắt đầu:</div>
+                            <div class="info-value" th:text="${#temporals.format(arvProtocol.startDate, 'dd/MM/yyyy')}">15/01/2024</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-calendar-check info-icon"></i>Ngày kết thúc:</div>
+                            <div class="info-value" th:text="${arvProtocol.endDate != null ? #temporals.format(arvProtocol.endDate, 'dd/MM/yyyy') : 'Đang điều trị'}">Đang điều trị</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-user-md info-icon"></i>Bác sĩ điều trị:</div>
+                            <div class="info-value" th:text="${arvProtocol.doctorName}">Dr. Trần Văn A</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-info-circle info-icon"></i>Trạng thái:</div>
+                            <div class="info-value">
+                                <span class="status-badge status-active" th:class="${'status-badge status-' + arvProtocol.status}" th:text="${arvProtocol.statusName}">Đang hoạt động</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Treatment Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-stethoscope me-2"></i>Thông tin điều trị
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-diagnoses info-icon"></i>Chẩn đoán:</div>
+                            <div class="info-value" th:text="${arvProtocol.diagnosis}">HIV/AIDS - Giai đoạn 2</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-users info-icon"></i>Nhóm bệnh nhân:</div>
+                            <div class="info-value" th:text="${arvProtocol.patientGroup}">Người lớn</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-pills info-icon"></i>Phác đồ:</div>
+                            <div class="info-value" th:text="${arvProtocol.regimen}">TDF + 3TC + EFV</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-clock info-icon"></i>Liều lượng:</div>
+                            <div class="info-value" th:text="${arvProtocol.dosage}">1 viên/ngày</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-calendar-alt info-icon"></i>Tần suất:</div>
+                            <div class="info-value" th:text="${arvProtocol.frequency}">Hàng ngày</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-clock info-icon"></i>Thời gian uống:</div>
+                            <div class="info-value" th:text="${arvProtocol.takingTime}">Buổi tối</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-calendar-alt info-icon"></i>Thời gian điều trị:</div>
+                            <div class="info-value" th:text="${arvProtocol.treatmentDuration}">12 tháng</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label"><i class="fas fa-percentage info-icon"></i>Tuân thủ:</div>
+                            <div class="info-value" th:text="${arvProtocol.adherence}">95%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Medication Details -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="fas fa-pills me-2"></i>Chi tiết thuốc
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="medication-table">
+                        <thead>
+                            <tr>
+                                <th>Thuốc</th>
+                                <th>Liều lượng</th>
+                                <th>Tần suất</th>
+                                <th>Thời gian uống</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="med : ${arvProtocol.medications}">
+                                <td><strong th:text="${med.name}">TDF (Tenofovir)</strong><br><small th:text="${med.strength}">300mg</small></td>
+                                <td th:text="${med.dosage}">1 viên</td>
+                                <td th:text="${med.frequency}">Hàng ngày</td>
+                                <td th:text="${med.takingTime}">Buổi tối</td>
+                                <td th:text="${med.note}">Thuốc chính</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Side Effects -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Tác dụng phụ
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-exclamation-triangle info-icon"></i>Tác dụng phụ:</div>
+                    <div class="info-value" th:text="${arvProtocol.sideEffects}">Buồn nôn nhẹ, mất ngủ, chóng mặt</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-calendar-alt info-icon"></i>Thời gian xuất hiện:</div>
+                    <div class="info-value" th:text="${arvProtocol.sideEffectTime}">2-4 tuần đầu điều trị</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-chart-line info-icon"></i>Mức độ:</div>
+                    <div class="info-value" th:text="${arvProtocol.sideEffectLevel}">Nhẹ - Có thể chịu đựng được</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-clipboard-list info-icon"></i>Xử lý:</div>
+                    <div class="info-value" th:text="${arvProtocol.sideEffectHandling}">Uống thuốc sau khi ăn, tránh uống rượu bia, thông báo bác sĩ nếu tác dụng phụ nặng</div>
+                </div>
+            </div>
+        </div>
+        <!-- Monitoring -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="fas fa-chart-line me-2"></i>Theo dõi điều trị
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-calendar-check info-icon"></i>Lịch tái khám:</div>
+                    <div class="info-value" th:text="${arvProtocol.reExamSchedule}">Mỗi tháng</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-flask info-icon"></i>Xét nghiệm định kỳ:</div>
+                    <div class="info-value" th:text="${arvProtocol.periodicTest}">CD4, tải lượng virus mỗi 3 tháng</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-heartbeat info-icon"></i>Theo dõi lâm sàng:</div>
+                    <div class="info-value" th:text="${arvProtocol.clinicalMonitoring}">Cân nặng, huyết áp, triệu chứng</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-exclamation-circle info-icon"></i>Cảnh báo:</div>
+                    <div class="info-value" th:text="${arvProtocol.warning}">Ngừng thuốc ngay nếu có phản ứng dị ứng nghiêm trọng</div>
+                </div>
+            </div>
+        </div>
+        <!-- Treatment Timeline -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <i class="fas fa-history me-2"></i>Lịch sử điều trị
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item" th:each="item : ${arvProtocol.timeline}">
+                        <div class="timeline-content">
+                            <div class="timeline-date" th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">15/01/2024</div>
+                            <div class="timeline-title" th:text="${item.title}">Bắt đầu điều trị ARV</div>
+                            <div class="timeline-description" th:text="${item.description}">Bắt đầu phác đồ TDF + 3TC + EFV cho bệnh nhân mới</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:src="@{/js/arvProtocol.js}"></script>
+</body>
+</html>
