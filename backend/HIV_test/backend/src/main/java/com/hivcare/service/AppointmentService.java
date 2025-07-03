@@ -1,203 +1,271 @@
 package com.hivcare.service;
 
 import com.hivcare.dto.request.AppointmentRequest;
-import com.hivcare.dto.response.AppointmentResponse;
 import com.hivcare.entity.Appointment;
 import com.hivcare.entity.Doctor;
 import com.hivcare.entity.Patient;
-import com.hivcare.entity.User;
-import com.hivcare.enums.AppointmentStatus;
-import com.hivcare.enums.AppointmentType;
-import com.hivcare.exception.ResourceNotFoundException;
-import com.hivcare.exception.BadRequestException;
 import com.hivcare.repository.AppointmentRepository;
 import com.hivcare.repository.DoctorRepository;
 import com.hivcare.repository.PatientRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@SuppressWarnings("unused")
 @Service
-@RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
-    private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
 
-    public List<AppointmentResponse> getPatientAppointments(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        
-        // For demo purposes, return mock data
-        if (user.getRole().name().equals("CUSTOMER")) {
-            return getMockPatientAppointments();
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
+    public Page<Appointment> getAllAppointments(Pageable pageable) {
+        return appointmentRepository.findAll(pageable);
+    }
+
+    public Optional<Appointment> getAppointmentById(Long id) {
+        return appointmentRepository.findById(id);
+    }
+
+    public Optional<Appointment> getAppointmentByCode(String code) {
+        return appointmentRepository.findByAppointmentCode(code);
+    }
+
+    public List<Appointment> getAppointmentsByPatient(Long patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
+    public List<Appointment> getAppointmentsByDoctor(Long doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
+    }
+
+    public List<Appointment> getDoctorAppointmentsByDate(Long doctorId, LocalDateTime startDate, LocalDateTime endDate) {
+        return appointmentRepository.findByDoctorIdAndDateBetween(doctorId, startDate, endDate);
+    }
+
+    public List<Appointment> getTodayAppointmentsByDoctor(Long doctorId) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+        return appointmentRepository.findByDoctorIdAndDateBetween(doctorId, startOfDay, endOfDay);
+    }
+
+    public long countPendingAppointmentsByDoctor(Long doctorId) {
+        return appointmentRepository.countByDoctorIdAndStatus(doctorId, Appointment.AppointmentStatus.SCHEDULED);
+    }
+
+    public long countPendingAppointments() {
+        return appointmentRepository.countByStatus(Appointment.AppointmentStatus.SCHEDULED);
+    }
+
+    public List<Appointment> getUpcomingAppointmentsByPatient(Long patientId) {
+        LocalDateTime now = LocalDateTime.now();
+        return appointmentRepository.findByPatientIdAndDateAfterOrderByDateAsc(patientId, now);
+    }
+
+    @Transactional
+    public Appointment saveAppointment(Appointment appointment) {
+        logger.info("Saving appointment: {}", appointment);
+
+        // Validate patient
+        if (appointment.getPatient() == null || appointment.getPatient().getId() == null) {
+            throw new IllegalArgumentException("Vui lòng chọn bệnh nhân");
         }
-        
-        return List.of();
-    }
+        Patient patient = patientRepository.findById(appointment.getPatient().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy bệnh nhân"));
+        appointment.setPatient(patient);
 
-    public List<AppointmentResponse> getDoctorAppointments(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        
-        // For demo purposes, return mock data
-        if (user.getRole().name().equals("DOCTOR")) {
-            return getMockDoctorAppointments();
+        // Validate doctor
+        if (appointment.getDoctor() == null || appointment.getDoctor().getId() == null) {
+            throw new IllegalArgumentException("Vui lòng chọn bác sĩ");
         }
-        
-        return List.of();
-    }
+        Doctor doctor = doctorRepository.findById(appointment.getDoctor().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy bác sĩ"));
+        appointment.setDoctor(doctor);
 
-    public AppointmentResponse createAppointment(AppointmentRequest request, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        
-        // Validate appointment time
-        if (request.getAppointmentDate().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Cannot book appointment in the past");
+        // Validate appointment date
+        if (appointment.getAppointmentDate() == null) {
+            throw new IllegalArgumentException("Vui lòng chọn ngày và giờ hẹn");
         }
 
-        // For demo, create mock appointment
-        AppointmentResponse response = AppointmentResponse.builder()
-                .id(System.currentTimeMillis())
-                .patientName(user.getFullName())
-                .doctorName("BS. Nguyễn Văn Minh")
-                .appointmentDate(request.getAppointmentDate())
-                .type(AppointmentType.valueOf(request.getType().toUpperCase()))
-                .status(AppointmentStatus.SCHEDULED)
-                .reason(request.getReason())
-                .isOnline(request.getIsOnline() != null ? request.getIsOnline() : false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        LocalDateTime now = LocalDateTime.now();
+        if (appointment.getAppointmentDate().isBefore(now)) {
+            throw new IllegalArgumentException("Thời gian hẹn không thể trong quá khứ");
+        }
 
-        log.info("Created appointment for user: {} with doctor: {}", user.getEmail(), request.getDoctorId());
-        
-        return response;
-    }
+        // Validate working hours (8:00 - 17:00)
+        LocalTime appointmentTime = appointment.getAppointmentDate().toLocalTime();
+        if (appointmentTime.isBefore(LocalTime.of(8, 0)) || appointmentTime.isAfter(LocalTime.of(17, 0))) {
+            throw new IllegalArgumentException("Giờ hẹn phải trong khoảng 8:00 - 17:00");
+        }
 
-    public AppointmentResponse createAnonymousAppointment(AppointmentRequest request) {
-        String anonymousId = "AC" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        
-        AppointmentResponse response = AppointmentResponse.builder()
-                .id(System.currentTimeMillis())
-                .anonymousId(anonymousId)
-                .doctorName("Bác sĩ trực")
-                .appointmentDate(request.getAppointmentDate())
-                .type(AppointmentType.ANONYMOUS_CONSULTATION)
-                .status(AppointmentStatus.SCHEDULED)
-                .reason(request.getReason())
-                .isOnline(true)
-                .isAnonymous(true)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        log.info("Created anonymous appointment with ID: {}", anonymousId);
-        
-        return response;
-    }
-
-    public AppointmentResponse updateAppointmentStatus(Long appointmentId, String status, Authentication authentication) {
-        // For demo purposes
-        AppointmentResponse response = AppointmentResponse.builder()
-                .id(appointmentId)
-                .status(AppointmentStatus.valueOf(status.toUpperCase()))
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        log.info("Updated appointment {} status to: {}", appointmentId, status);
-        
-        return response;
-    }
-
-    private List<AppointmentResponse> getMockPatientAppointments() {
-        return Arrays.asList(
-            AppointmentResponse.builder()
-                .id(1L)
-                .patientName("Nguyễn Văn A")
-                .doctorName("BS. Nguyễn Văn Minh")
-                .appointmentDate(LocalDateTime.of(2024, 12, 25, 14, 0))
-                .type(AppointmentType.FOLLOW_UP)
-                .status(AppointmentStatus.CONFIRMED)
-                .reason("Tái khám định kỳ")
-                .isOnline(false)
-                .location("Phòng khám 101")
-                .createdAt(LocalDateTime.now().minusDays(3))
-                .build(),
-                
-            AppointmentResponse.builder()
-                .id(2L)
-                .patientName("Nguyễn Văn A")
-                .doctorName("BS. Trần Thị Lan")
-                .appointmentDate(LocalDateTime.of(2024, 12, 28, 10, 30))
-                .type(AppointmentType.COUNSELING)
-                .status(AppointmentStatus.CONFIRMED)
-                .reason("Tư vấn trực tuyến")
-                .isOnline(true)
-                .location("Zoom Meeting")
-                .createdAt(LocalDateTime.now().minusDays(2))
-                .build(),
-                
-            AppointmentResponse.builder()
-                .id(3L)
-                .patientName("Nguyễn Văn A")
-                .doctorName("BS. Lê Hoàng Nam")
-                .appointmentDate(LocalDateTime.of(2025, 1, 2, 15, 30))
-                .type(AppointmentType.TEST_RESULTS)
-                .status(AppointmentStatus.SCHEDULED)
-                .reason("Xét nghiệm kiểm tra")
-                .isOnline(false)
-                .location("Phòng xét nghiệm")
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .build()
+        // Check for conflicting appointments
+        List<Appointment> doctorAppointments = getDoctorAppointmentsByDate(
+            doctor.getId(),
+            appointment.getAppointmentDate().minusHours(1),
+            appointment.getAppointmentDate().plusHours(1)
         );
+
+        for (Appointment existingAppointment : doctorAppointments) {
+            if (!existingAppointment.getId().equals(appointment.getId()) && 
+                !existingAppointment.getStatus().equals(Appointment.AppointmentStatus.CANCELLED)) {
+                throw new IllegalArgumentException("Bác sĩ đã có lịch hẹn khác trong khoảng thời gian này");
+            }
+        }
+
+        // Set default status for new appointments
+        if (appointment.getId() == null) {
+            appointment.setStatus(Appointment.AppointmentStatus.SCHEDULED);
+        }
+
+        // Save the appointment
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        logger.info("Successfully saved appointment with ID: {}", savedAppointment.getId());
+
+        return savedAppointment;
     }
 
-    private List<AppointmentResponse> getMockDoctorAppointments() {
-        return Arrays.asList(
-            AppointmentResponse.builder()
-                .id(1L)
-                .patientName("Bệnh nhân A")
-                .doctorName("BS. Nguyễn Văn Minh")
-                .appointmentDate(LocalDateTime.now().withHour(9).withMinute(0))
-                .type(AppointmentType.FOLLOW_UP)
-                .status(AppointmentStatus.COMPLETED)
-                .reason("Tái khám")
-                .isOnline(false)
-                .createdAt(LocalDateTime.now().minusHours(3))
-                .build(),
-                
-            AppointmentResponse.builder()
-                .id(2L)
-                .patientName("Bệnh nhân B")
-                .doctorName("BS. Nguyễn Văn Minh")
-                .appointmentDate(LocalDateTime.now().withHour(10).withMinute(30))
-                .type(AppointmentType.CONSULTATION)
-                .status(AppointmentStatus.IN_PROGRESS)
-                .reason("Khám mới")
-                .isOnline(false)
-                .createdAt(LocalDateTime.now().minusHours(1))
-                .build(),
-                
-            AppointmentResponse.builder()
-                .id(3L)
-                .patientName("Bệnh nhân C")
-                .doctorName("BS. Nguyễn Văn Minh")
-                .appointmentDate(LocalDateTime.now().withHour(14).withMinute(0))
-                .type(AppointmentType.COUNSELING)
-                .status(AppointmentStatus.SCHEDULED)
-                .reason("Tư vấn")
-                .isOnline(true)
-                .createdAt(LocalDateTime.now().minusMinutes(30))
-                .build()
-        );
+    @Transactional
+    public void deleteAppointment(Long id) {
+        logger.info("Deleting appointment with ID: {}", id);
+        
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch hẹn với ID: " + id));
+
+        // Only allow deletion of future appointments
+        if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Không thể xóa lịch hẹn đã qua");
+        }
+
+        appointmentRepository.deleteById(id);
+        logger.info("Successfully deleted appointment with ID: {}", id);
+    }
+
+    public List<Appointment> getUpcomingAppointmentsForReminder() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime reminderTime = now.plusHours(24); // 24 hours ahead
+        return appointmentRepository.findUpcomingAppointmentsForReminder(now, reminderTime);
+    }
+
+    public boolean isDoctorAvailable(Long doctorId, LocalDateTime appointmentDate) {
+        List<Appointment> existingAppointments = appointmentRepository
+                .findByDoctorAndDate(doctorId, appointmentDate);
+        
+        // Check if there's a conflict (60 minutes buffer)
+        return existingAppointments.stream()
+                .noneMatch(apt -> !apt.getStatus().equals(Appointment.AppointmentStatus.CANCELLED) &&
+                        Math.abs(apt.getAppointmentDate().compareTo(appointmentDate)) < 60);
+    }
+
+    public long getTotalAppointments() {
+        return appointmentRepository.count();
+    }
+
+    public long getAppointmentsByStatus(Appointment.AppointmentStatus status) {
+        return appointmentRepository.countByStatus(status);
+    }
+
+    public List<Appointment> getTodayAppointments() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+        return appointmentRepository.findByDateBetweenWithDetails(startOfDay, endOfDay);
+    }
+
+    public List<Appointment> getUpcomingAppointments() {
+        LocalDateTime now = LocalDateTime.now();
+        return appointmentRepository.findByDateAfterOrderByDateAsc(now);
+    }
+
+    public List<Appointment> getCompletedAppointments() {
+        return appointmentRepository.findByStatusWithDetails(Appointment.AppointmentStatus.COMPLETED);
+    }
+
+    @Transactional
+    public Appointment bookAppointment(Long patientId, AppointmentRequest request) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        
+        Doctor doctor = doctorRepository.findById(request.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        // Create new appointment
+        Appointment appointment = new Appointment();
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setAppointmentDate(request.getAppointmentDate());
+        appointment.setAppointmentType(request.getAppointmentType());
+        appointment.setReason(request.getReason());
+        appointment.setAnonymous(request.isAnonymous());
+        appointment.setOnline(request.isOnline());
+        appointment.setStatus(Appointment.AppointmentStatus.SCHEDULED);
+
+        // Validate and save
+        return saveAppointment(appointment);
+    }
+
+    @Transactional
+    public Appointment updateAppointment(Long id, Appointment appointmentDetails) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        // Update fields
+        appointment.setAppointmentDate(appointmentDetails.getAppointmentDate());
+        appointment.setAppointmentType(appointmentDetails.getAppointmentType());
+        appointment.setReason(appointmentDetails.getReason());
+        appointment.setNotes(appointmentDetails.getNotes());
+        appointment.setAnonymous(appointmentDetails.isAnonymous());
+        appointment.setOnline(appointmentDetails.isOnline());
+        appointment.setMeetingLink(appointmentDetails.getMeetingLink());
+        
+        if (appointmentDetails.getDoctor() != null) {
+            Doctor doctor = doctorRepository.findById(appointmentDetails.getDoctor().getId())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            appointment.setDoctor(doctor);
+        }
+
+        // Validate and save
+        return saveAppointment(appointment);
+    }
+
+    @Transactional
+    public Appointment cancelAppointment(Long id, String reason) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        // Only allow cancellation of future appointments
+        if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Cannot cancel past appointments");
+        }
+
+        appointment.setStatus(Appointment.AppointmentStatus.CANCELLED);
+        appointment.setReason(reason);
+
+        Appointment cancelledAppointment = appointmentRepository.save(appointment);
+
+        return cancelledAppointment;
+    }
+
+    public List<Appointment> getRecentAppointments(int limit) {
+        return appointmentRepository.findTop10ByOrderByAppointmentDateDesc();
     }
 }

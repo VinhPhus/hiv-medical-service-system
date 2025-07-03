@@ -14,14 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hivcare.entity.Doctor;
 import com.hivcare.entity.Patient;
 import com.hivcare.entity.User;
-import com.hivcare.entity.User.Role;
 import com.hivcare.repository.DoctorRepository;
 import com.hivcare.repository.PatientRepository;
 import com.hivcare.repository.UserRepository;
 
 @Service
 @Transactional
-public class UserService {
+public class UserServiceUpdated {
 
     @Autowired
     private UserRepository userRepository;
@@ -40,7 +39,7 @@ public class UserService {
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
-        return userRepository.findAllDistinct(pageable);
+        return userRepository.findAll(pageable);
     }
 
     public Optional<User> getUserById(Long id) {
@@ -59,8 +58,20 @@ public class UserService {
         return userRepository.findByRole(role);
     }
 
+    public Page<User> getUsersByRolePaged(User.Role role, Pageable pageable) {
+        return userRepository.findByRole(role, pageable);
+    }
+
+    public List<User> getActiveUsersByRole(User.Role role) {
+        return userRepository.findActiveUsersByRole(role);
+    }
+
     public Page<User> searchUsers(String searchTerm, Pageable pageable) {
         return userRepository.findBySearchTerm(searchTerm, pageable);
+    }
+
+    public List<User> getUsersByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return userRepository.findByCreatedAtBetween(startDate, endDate);
     }
 
     public User createUser(User user) {
@@ -87,7 +98,6 @@ public class UserService {
         user.setEmail(userDetails.getEmail());
         user.setPhoneNumber(userDetails.getPhoneNumber());
         user.setEnabled(userDetails.isEnabled());
-        user.setLastLogin(userDetails.getLastLogin());
 
         return userRepository.save(user);
     }
@@ -112,6 +122,14 @@ public class UserService {
         return true;
     }
 
+    public User resetPassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
     public long getTotalUsers() {
         return userRepository.count();
     }
@@ -120,53 +138,15 @@ public class UserService {
         return userRepository.countByRole(role);
     }
 
+    public long countActiveUsers() {
+        return userRepository.countActiveUsers();
+    }
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
-    }
-
-    public Page<User> getUsersByRole(Role role, Pageable pageable) {
-        return userRepository.findByRole(role, pageable);
-    }
-
-    public List<User> getUsersByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        return userRepository.findByCreatedAtBetween(startDate, endDate);
-    }
-
-    public List<User> getActiveUsersByRole(Role role) {
-        return userRepository.findActiveUsersByRole(role);
-    }
-
-    public long countActiveUsers() {
-        return userRepository.countActiveUsers();
-    }
-
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
-    }
-
-    public User save(User user) {
-        // Log user details before saving
-        System.out.println("Saving user: " + user.getUsername() + " with role: " + user.getRole());
-        
-        // Ensure password is encoded
-        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            System.out.println("Encoding password for user: " + user.getUsername());
-            user.setPassword(encodedPassword);
-        }
-        
-        User savedUser = userRepository.save(user);
-        System.out.println("User saved successfully with ID: " + savedUser.getId());
-        return savedUser;
-    }
-
-    public Optional<Long> getUserIdByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .map(User::getId);
     }
 }
