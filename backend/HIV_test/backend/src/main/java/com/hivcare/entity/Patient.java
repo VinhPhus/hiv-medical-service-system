@@ -1,84 +1,179 @@
 package com.hivcare.entity;
 
-import com.hivcare.enums.Gender;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "patients")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class Patient {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
-    @Column(name = "patient_code", unique = true, nullable = false)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+
+    @Column(name = "patient_code", unique = true)
     private String patientCode;
-    
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
     @Enumerated(EnumType.STRING)
-    private Gender gender;
-    
-    @Column(name = "diagnosis_date")
-    private LocalDateTime diagnosisDate;
-    
+    @Column(name = "gender")
+    private User.Gender gender;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "emergency_contact")
+    private String emergencyContact;
+
+    @Column(name = "emergency_phone")
+    private String emergencyPhone;
+
+    @Column(name = "hiv_diagnosis_date")
+    private LocalDate hivDiagnosisDate;
+
     @Column(name = "treatment_start_date")
-    private LocalDateTime treatmentStartDate;
-    
-    @Column(name = "current_arv_regimen")
-    private String currentArvRegimen;
-    
-    @Column(name = "adherence_rate")
-    @Builder.Default
-    private Double adherenceRate = 0.0;
+    private LocalDate treatmentStartDate;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<Appointment> appointments = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "treatment_status")
+    private TreatmentStatus treatmentStatus = TreatmentStatus.ACTIVE;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<TestResult> testResults = new ArrayList<>();
+    @Column(name = "insurance_number")
+    private String insuranceNumber;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<MedicationReminder> medicationReminders = new ArrayList<>();
-    
-    @Column(name = "next_appointment_date")
-    private LocalDateTime nextAppointmentDate;
-    
-    @Column(name = "latest_cd4")
-    private Integer latestCd4;
-    
-    @Column(name = "latest_viral_load")
-    private String latestViralLoad;
-    
-    @Column(name = "treatment_notes", columnDefinition = "TEXT")
-    private String treatmentNotes;
-    
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status = Status.ACTIVE;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    
-    @LastModifiedDate
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Appointment> appointments = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<MedicalRecord> medicalRecords = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TestResult> testResults = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Treatment> treatments = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (patientCode == null) {
+            patientCode = generatePatientCode();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    private String generatePatientCode() {
+        return "PT" + System.currentTimeMillis();
+    }
+
+    // Constructors
+    public Patient() {}
+
+    public Patient(User user) {
+        this.user = user;
+        this.gender = user.getGender();
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Doctor getDoctor() { return doctor; }
+    public void setDoctor(Doctor doctor) { this.doctor = doctor; }
+
+    public String getPatientCode() { return patientCode; }
+    public void setPatientCode(String patientCode) { this.patientCode = patientCode; }
+
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public User.Gender getGender() { return gender; }
+    public void setGender(User.Gender gender) { this.gender = gender; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
+
+    public String getEmergencyPhone() { return emergencyPhone; }
+    public void setEmergencyPhone(String emergencyPhone) { this.emergencyPhone = emergencyPhone; }
+
+    public LocalDate getHivDiagnosisDate() { return hivDiagnosisDate; }
+    public void setHivDiagnosisDate(LocalDate hivDiagnosisDate) { this.hivDiagnosisDate = hivDiagnosisDate; }
+
+    public LocalDate getTreatmentStartDate() { return treatmentStartDate; }
+    public void setTreatmentStartDate(LocalDate treatmentStartDate) { this.treatmentStartDate = treatmentStartDate; }
+
+    public TreatmentStatus getTreatmentStatus() { return treatmentStatus; }
+    public void setTreatmentStatus(TreatmentStatus treatmentStatus) { this.treatmentStatus = treatmentStatus; }
+
+    public String getInsuranceNumber() { return insuranceNumber; }
+    public void setInsuranceNumber(String insuranceNumber) { this.insuranceNumber = insuranceNumber; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public Set<Appointment> getAppointments() { return appointments; }
+    public void setAppointments(Set<Appointment> appointments) { this.appointments = appointments; }
+
+    public Set<MedicalRecord> getMedicalRecords() { return medicalRecords; }
+    public void setMedicalRecords(Set<MedicalRecord> medicalRecords) { this.medicalRecords = medicalRecords; }
+
+    public Set<TestResult> getTestResults() { return testResults; }
+    public void setTestResults(Set<TestResult> testResults) { this.testResults = testResults; }
+
+    public Set<Treatment> getTreatments() { return treatments; }
+    public void setTreatments(Set<Treatment> treatments) { this.treatments = treatments; }
+
+    public enum TreatmentStatus {
+        ACTIVE, PAUSED, COMPLETED, DISCONTINUED, TRANSFERRED, DECEASED
+    }
+
+    public enum Status {
+        ACTIVE, INACTIVE, DECEASED, TRANSFERRED
+    }
 }
