@@ -1,7 +1,6 @@
 package com.hivcare.repository;
 
 import com.hivcare.entity.MedicationReminder;
-import com.hivcare.entity.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,20 +12,20 @@ import java.util.List;
 @Repository
 public interface MedicationReminderRepository extends JpaRepository<MedicationReminder, Long> {
     
-    List<MedicationReminder> findByPatientAndActiveTrue(Patient patient);
+    List<MedicationReminder> findByTreatmentId(Long treatmentId);
     
-    List<MedicationReminder> findByPatientIdAndActiveTrue(Long patientId);
+    @Query("SELECT m FROM MedicationReminder m WHERE m.active = true AND m.nextReminder <= :currentTime")
+    List<MedicationReminder> findDueReminders(@Param("currentTime") LocalDateTime currentTime);
     
-    @Query("SELECT mr FROM MedicationReminder mr WHERE mr.patient.id = :patientId AND mr.active = true ORDER BY mr.reminderTime ASC")
-    List<MedicationReminder> findActiveRemindersByPatientId(@Param("patientId") Long patientId);
+    @Query("SELECT m FROM MedicationReminder m WHERE m.treatment.patient.id = :patientId AND m.active = true")
+    List<MedicationReminder> findActiveByPatientId(@Param("patientId") Long patientId);
     
-    @Query("SELECT mr FROM MedicationReminder mr WHERE mr.reminderTime BETWEEN :startTime AND :endTime AND mr.active = true")
-    List<MedicationReminder> findRemindersInTimeRange(@Param("startTime") LocalDateTime startTime, 
-                                                     @Param("endTime") LocalDateTime endTime);
+    @Query("SELECT m FROM MedicationReminder m WHERE m.treatment.patient.id = :patientId")
+    List<MedicationReminder> findByPatientId(@Param("patientId") Long patientId);
     
-    @Query("SELECT mr FROM MedicationReminder mr WHERE mr.patient.id = :patientId AND mr.medicationName LIKE %:medicationName% AND mr.active = true")
-    List<MedicationReminder> findByPatientIdAndMedicationNameContaining(@Param("patientId") Long patientId, 
-                                                                        @Param("medicationName") String medicationName);
+    @Query("SELECT m FROM MedicationReminder m WHERE m.active = true")
+    List<MedicationReminder> findAllActive();
     
-    List<MedicationReminder> findByActiveTrueOrderByReminderTimeAsc();
+    @Query("SELECT COUNT(m) FROM MedicationReminder m WHERE m.active = true")
+    long countActiveReminders();
 }
