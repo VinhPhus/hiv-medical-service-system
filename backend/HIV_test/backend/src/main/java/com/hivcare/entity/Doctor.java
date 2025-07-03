@@ -1,89 +1,158 @@
 package com.hivcare.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "doctors")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class Doctor {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
-    @Column(name = "license_number", unique = true, nullable = false)
+
+    @Column(name = "doctor_code", unique = true)
+    private String doctorCode;
+
+    @Column(name = "license_number")
     private String licenseNumber;
-    
-    @Column(nullable = false)
+
+    @Column(name = "specialization")
     private String specialization;
-    
-    @Column(name = "years_experience")
-    private Integer yearsExperience;
-    
-    private String education;
-    
-    @Column(columnDefinition = "TEXT")
-    private String bio;
-    
-    @ElementCollection
-    @CollectionTable(name = "doctor_languages", joinColumns = @JoinColumn(name = "doctor_id"))
-    @Column(name = "language")
-    @Builder.Default
-    private List<String> languages = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "doctor_achievements", joinColumns = @JoinColumn(name = "doctor_id"))
-    @Column(name = "achievement")
-    @Builder.Default
-    private List<String> achievements = new ArrayList<>();
+    @Column(name = "qualification")
+    private String qualification;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<DoctorSchedule> schedules = new ArrayList<>();
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<Appointment> appointments = new ArrayList<>();
+    @Column(name = "experience_years")
+    private Integer experienceYears;
 
     @Column(name = "consultation_fee")
     private Double consultationFee;
 
-    @Column(name = "rating")
-    @Builder.Default
-    private Double rating = 0.0;
+    @Column(name = "bio", columnDefinition = "TEXT")
+    private String bio;
 
-    @Column(name = "total_patients")
-    @Builder.Default
-    private Integer totalPatients = 0;
+    @Column(name = "is_available")
+    private boolean available = true;
 
-    @Column(name = "available_today")
-    @Builder.Default
-    private Boolean availableToday = true;
-    
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "working_hours")
+    private String workingHours;
+
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status = Status.ACTIVE;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    
-    @LastModifiedDate
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Appointment> appointments = new HashSet<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Treatment> treatments = new HashSet<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<DoctorSchedule> schedules = new HashSet<>();
+
+    @Column(name = "specialty")
+    private String specialty;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (doctorCode == null) {
+            doctorCode = generateDoctorCode();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    private String generateDoctorCode() {
+        return "DR" + System.currentTimeMillis();
+    }
+
+    // Constructors
+    public Doctor() {}
+
+    public Doctor(User user) {
+        this.user = user;
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getDoctorCode() { return doctorCode; }
+    public void setDoctorCode(String doctorCode) { this.doctorCode = doctorCode; }
+
+    public String getLicenseNumber() { return licenseNumber; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
+
+    public String getSpecialization() { return specialization; }
+    public void setSpecialization(String specialization) { this.specialization = specialization; }
+
+    public String getQualification() { return qualification; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
+
+    public Integer getExperienceYears() { return experienceYears; }
+    public void setExperienceYears(Integer experienceYears) { this.experienceYears = experienceYears; }
+
+    public Double getConsultationFee() { return consultationFee; }
+    public void setConsultationFee(Double consultationFee) { this.consultationFee = consultationFee; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
+
+    public String getWorkingHours() { return workingHours; }
+    public void setWorkingHours(String workingHours) { this.workingHours = workingHours; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public Set<Appointment> getAppointments() { return appointments; }
+    public void setAppointments(Set<Appointment> appointments) { this.appointments = appointments; }
+
+    public Set<Treatment> getTreatments() { return treatments; }
+    public void setTreatments(Set<Treatment> treatments) { this.treatments = treatments; }
+
+    public Set<DoctorSchedule> getSchedules() { return schedules; }
+    public void setSchedules(Set<DoctorSchedule> schedules) { this.schedules = schedules; }
+
+    public String getSpecialty() { return specialty; }
+    public void setSpecialty(String specialty) { this.specialty = specialty; }
+
+    public enum Status {
+        ACTIVE, INACTIVE, ON_LEAVE, TERMINATED
+    }
 }
