@@ -1,13 +1,12 @@
 
 package com.hivcare.service;
 
-import com.hivcare.dto.request.AppointmentRequest;
-import com.hivcare.entity.Appointment;
-import com.hivcare.entity.Doctor;
-import com.hivcare.entity.Patient;
-import com.hivcare.repository.AppointmentRepository;
-import com.hivcare.repository.DoctorRepository;
-import com.hivcare.repository.PatientRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import com.hivcare.dto.request.AppointmentRequest;
+import com.hivcare.entity.Appointment;
+import com.hivcare.entity.Doctor;
+import com.hivcare.entity.Patient;
+import com.hivcare.repository.AppointmentRepository;
+import com.hivcare.repository.DoctorRepository;
+import com.hivcare.repository.PatientRepository;
 
 @Service
 @Transactional
@@ -96,7 +97,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy bệnh nhân"));
         appointment.setPatient(patient);
 
-        // Validate doctor
+        // Xác nhận bác sĩ
         if (appointment.getDoctor() == null || appointment.getDoctor().getId() == null) {
             throw new IllegalArgumentException("Vui lòng chọn bác sĩ");
         }
@@ -104,7 +105,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy bác sĩ"));
         appointment.setDoctor(doctor);
 
-        // Validate appointment date
+        // Xác thực ngày hẹn
         if (appointment.getAppointmentDate() == null) {
             throw new IllegalArgumentException("Vui lòng chọn ngày và giờ hẹn");
         }
@@ -114,13 +115,13 @@ public class AppointmentService {
             throw new IllegalArgumentException("Thời gian hẹn không thể trong quá khứ");
         }
 
-        // Validate working hours (8:00 - 17:00)
+        // Xác thực giờ làm việc (8:00 - 17:00)
         LocalTime appointmentTime = appointment.getAppointmentDate().toLocalTime();
         if (appointmentTime.isBefore(LocalTime.of(8, 0)) || appointmentTime.isAfter(LocalTime.of(17, 0))) {
             throw new IllegalArgumentException("Giờ hẹn phải trong khoảng 8:00 - 17:00");
         }
 
-        // Check for conflicting appointments
+        // Kiểm tra xem có xung đột không
         List<Appointment> doctorAppointments = getDoctorAppointmentsByDate(
             doctor.getId(),
             appointment.getAppointmentDate().minusHours(1),
@@ -134,12 +135,13 @@ public class AppointmentService {
             }
         }
 
-        // Set default status for new appointments
+        // Đặt trạng thái mặc định cho các cuộc hẹn mới
         if (appointment.getId() == null) {
             appointment.setStatus(Appointment.AppointmentStatus.SCHEDULED);
         }
 
-        // Save the appointment
+        // Lưu cuộc hẹn
+
         Appointment savedAppointment = appointmentRepository.save(appointment);
         logger.info("Successfully saved appointment with ID: {}", savedAppointment.getId());
 
@@ -153,7 +155,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch hẹn với ID: " + id));
 
-        // Only allow deletion of future appointments
+        // Chỉ cho phép xóa các cuộc hẹn trong tương lai
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Không thể xóa lịch hẹn đã qua");
         }
@@ -172,7 +174,7 @@ public class AppointmentService {
         List<Appointment> existingAppointments = appointmentRepository
                 .findByDoctorAndDate(doctorId, appointmentDate);
         
-        // Check if there's a conflict (60 minutes buffer)
+        // Kiểm tra xem có xung đột không (khoảng đệm 60 phút)
         return existingAppointments.stream()
                 .noneMatch(apt -> !apt.getStatus().equals(Appointment.AppointmentStatus.CANCELLED) &&
                         Math.abs(apt.getAppointmentDate().compareTo(appointmentDate)) < 60);
@@ -209,7 +211,7 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        // Create new appointment
+        // Tạo cuộc hẹn mới
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
@@ -220,7 +222,7 @@ public class AppointmentService {
         appointment.setOnline(request.isOnline());
         appointment.setStatus(Appointment.AppointmentStatus.SCHEDULED);
 
-        // Validate and save
+        // Xác thực và lưu
         return saveAppointment(appointment);
     }
 
@@ -244,7 +246,7 @@ public class AppointmentService {
             appointment.setDoctor(doctor);
         }
 
-        // Validate and save
+        // Xác thực và lưu
         return saveAppointment(appointment);
     }
 
@@ -253,7 +255,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        // Only allow cancellation of future appointments
+        // Chỉ cho phép hủy các cuộc hẹn trong tương lai
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Cannot cancel past appointments");
         }
