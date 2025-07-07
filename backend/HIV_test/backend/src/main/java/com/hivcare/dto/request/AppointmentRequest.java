@@ -1,6 +1,20 @@
 package com.hivcare.dto.request;
 
+import com.hivcare.entity.Appointment;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Future;
+import java.time.LocalDateTime;
 
+public class AppointmentRequest {
+    
+    @NotNull
+    private Long doctorId;
+
+    @NotNull
+    @Future
+    private LocalDateTime appointmentDate;
+
+    private Appointment.AppointmentType appointmentType = Appointment.AppointmentType.CONSULTATION;
 
     private String reason;
 
