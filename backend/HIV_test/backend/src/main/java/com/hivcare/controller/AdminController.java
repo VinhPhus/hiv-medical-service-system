@@ -46,7 +46,6 @@ public class AdminController {
 
     @Autowired
     private AppointmentService appointmentService;
-
     @GetMapping("/users")
     public ResponseEntity<Page<User>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
