@@ -1,6 +1,7 @@
 package com.hivcare.controller;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hivcare.entity.Appointment;
@@ -398,4 +402,45 @@ public class DashboardController {
     }
 }
 
+@RestController
+@RequestMapping("/api/dashboard")
+@CrossOrigin(origins = "*", maxAge = 3600)
+class DashboardRestController {
+    @Autowired
+    private DoctorService doctorService;
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private AppointmentService appointmentService;
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+    @Autowired
+    private TestResultService testResultService;
 
+    @GetMapping("/doctor")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<?> getDoctorDashboard() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User user = (User) auth.getPrincipal();
+            Doctor doctor = doctorService.getDoctorByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin bác sĩ"));
+
+            // Lấy thông tin thống kê
+            long totalPatients = patientService.countPatientsByDoctor(doctor.getId());
+            long totalMedicalRecords = medicalRecordService.countMedicalRecordsByDoctor(doctor.getId());
+            List<TestResult> pendingTests = testResultService.getPendingTestsByDoctor(doctor.getId());
+            List<Appointment> todayAppointments = appointmentService.getTodayAppointmentsByDoctor(doctor.getId());
+
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("totalPatients", totalPatients);
+            result.put("totalMedicalRecords", totalMedicalRecords);
+            result.put("pendingTests", pendingTests != null ? pendingTests : Collections.emptyList());
+            result.put("todayAppointments", todayAppointments != null ? todayAppointments : Collections.emptyList());
+
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi: " + e.getMessage());
+        }
+    }
+}
