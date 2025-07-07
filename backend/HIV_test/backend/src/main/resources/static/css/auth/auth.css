@@ -1,1 +1,237 @@
 
+/* Kiểu dáng xác thực hiện đại */
+body {
+    /* Thiết lập nền đẹp cho các trang xác thực */
+    background: linear-gradient(135deg, #dc3545 0%, #ff7675 100%) !important;
+    min-height: 100vh;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+main.flex-grow-1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e14242 0%, #ff6b6b 100%);
+}
+
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Văn bản có hiệu ứng */
+.animate-text {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Kiểu dáng form */
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:focus {
+    border-color: #e14242;
+    box-shadow: 0 0 0 0.2rem rgba(225, 66, 66, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+/* Kiểu dáng nút */
+.btn-primary {
+    background: #e14242;
+    border: none;
+    transition: all 0.3s ease;
+    padding: 12px 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #c82f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(225, 66, 66, 0.2);
+}
+
+.btn-lg {
+    padding: 15px 30px;
+    font-size: 18px;
+}
+
+/* Kiểu dáng cảnh báo */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+    color: white;
+}
+
+/* Kiểu dáng liên kết */
+a {
+    color: #e14242;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #c82f2f;
+    text-decoration: underline;
+}
+
+.small {
+    font-size: 14px;
+}
+
+/* Phần tài khoản demo */
+.bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+
+.text-primary {
+    color: #e14242 !important;
+}
+
+code {
+    background: rgba(225, 66, 66, 0.1);
+    color: #e14242;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Thiết kế responsive */
+@media (max-width: 768px) {
+    .container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .card {
+        margin: 0 10px;
+    }
+    
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+}
+
+/* Hiệu ứng tải */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Icon chuyển đổi mật khẩu */
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+    color: #888;
+    background: transparent;
+    border: none;
+    padding: 0;
+    height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle:hover {
+    color: #e14242;
+}
+
+/* Nhóm form với vị trí tương đối cho trường mật khẩu */
+.form-group {
+    position: relative;
+}
+
+.form-check-input {
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #e14242;
+    border-color: #e14242;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(225, 66, 66, 0.25);
+}
+
+/* Kiểu dáng phần đầu đăng nhập */
+.login-header-bg {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    color: #fff;
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+}
