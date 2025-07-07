@@ -60,7 +60,11 @@ public class DoctorController {
         return ResponseEntity.ok(doctors);
     }
 
-    
+    @GetMapping("/public")
+    public ResponseEntity<List<Doctor>> getAvailableDoctors() {
+        List<Doctor> availableDoctors = doctorService.getAvailableDoctors();
+        return ResponseEntity.ok(availableDoctors);
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('STAFF') or hasRole('DOCTOR')")
