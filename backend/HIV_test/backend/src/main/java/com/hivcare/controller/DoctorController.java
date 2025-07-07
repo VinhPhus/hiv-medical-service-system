@@ -1,9 +1,8 @@
 package com.hivcare.controller;
 
-import com.hivcare.dto.response.ApiResponse;
-import com.hivcare.entity.Doctor;
-import com.hivcare.entity.DoctorSchedule;
-import com.hivcare.service.DoctorService;
+import java.time.DayOfWeek;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,10 +12,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.DayOfWeek;
-import java.util.List;
+import com.hivcare.dto.response.ApiResponse;
+import com.hivcare.entity.Doctor;
+import com.hivcare.entity.DoctorSchedule;
+import com.hivcare.service.DoctorService;
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -50,11 +60,7 @@ public class DoctorController {
         return ResponseEntity.ok(doctors);
     }
 
-    @GetMapping("/public")
-    public ResponseEntity<List<Doctor>> getAvailableDoctors() {
-        List<Doctor> availableDoctors = doctorService.getAvailableDoctors();
-        return ResponseEntity.ok(availableDoctors);
-    }
+    
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('STAFF') or hasRole('DOCTOR')")
