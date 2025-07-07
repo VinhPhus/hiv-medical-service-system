@@ -1,14 +1,15 @@
 package com.hivcare.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * API Service for integrated frontend-backend system
- * Simplified version without WebClient since frontend is part of backend
+ * Dịch vụ API cho hệ thống tích hợp frontend và backend
+ * Phiên bản đơn giản hóa, không sử dụng WebClient vì frontend đã nằm trong backend
  */
 @Service
 public class ApiService {
@@ -26,34 +27,34 @@ public class ApiService {
     }
 
     /**
-     * Simple health check method
+     * Hàm kiểm tra sức khỏe hệ thống đơn giản
      */
     public boolean isHealthy() {
         return true;
     }
 
     /**
-     * Get backend status
+     * Lấy trạng thái của backend
      */
     public String getBackendStatus() {
         return "Online - Integrated Mode";
     }
 
     /**
-     * Get API base URL
+     * Lấy địa chỉ gốc (base URL) của API
      */
     public String getApiBaseUrl() {
         return apiBaseUrl;
     }
 
     /**
-     * Get configured timeout
+     * Lấy thời gian timeout đã được cấu hình
      */
     public int getTimeout() {
         return timeout;
     }
 
-    // Mock methods for compatibility with existing code
+    // Các hàm giả lập để tương thích với mã nguồn hiện tại
     public ApiResponse<String> healthCheck() {
         return new ApiResponse<>(true, "Health check successful", "System is running");
     }
@@ -66,33 +67,33 @@ public class ApiService {
         return new ApiResponse<>(true, "Success", "[]"); // Mock empty protocols list
     }
 
-    // Simple mock methods that don't require WebClient
+    // Các hàm giả lập đơn giản không cần WebClient
     public ApiResponse<Map<String, Object>> login(String username, String password) {
-        // In integrated mode, login is handled directly by HomeWebController
+        // Ở chế độ tích hợp, đăng nhập được xử lý trực tiếp bởi HomeWebController
         return new ApiResponse<>(false, "Use direct login endpoint", null);
     }
 
     public ApiResponse<Map<String, Object>> register(Map<String, Object> registerData) {
-        // In integrated mode, registration is handled directly by HomeWebController
+        // Ở chế độ tích hợp, đăng ký được xử lý trực tiếp bởi HomeWebController
         return new ApiResponse<>(false, "Use direct registration endpoint", null);
     }
 
     public ApiResponse<String> get(String endpoint, String token) {
-        // Mock GET response
+        // Phản hồi GET giả lập
         return new ApiResponse<>(true, "Mock response", "{}");
     }
 
     public ApiResponse<String> post(String endpoint, Object data, String token) {
-        // Mock POST response
+        // Phản hồi POST giả lập
         return new ApiResponse<>(true, "Mock response", "{}");
     }
 
     public ApiResponse<String> put(String endpoint, Object data, String token) {
-        // Mock PUT response
+        // Phản hồi PUT giả lập
         return new ApiResponse<>(true, "Mock response", "{}");
     }
 
-    // Inner class for API response
+    // Lớp nội bộ cho phản hồi API
     public static class ApiResponse<T> {
         private boolean success;
         private String message;
