@@ -3,9 +3,9 @@ spring:
     name: hiv-care-management
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/hiv_care_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3307/hiv_care_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: nhathuy19062005
+    password: 157953
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
