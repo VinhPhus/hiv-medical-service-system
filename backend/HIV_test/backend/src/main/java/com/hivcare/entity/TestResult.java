@@ -1,3 +1,4 @@
+
 package com.hivcare.entity;
 
 import jakarta.persistence.*;
