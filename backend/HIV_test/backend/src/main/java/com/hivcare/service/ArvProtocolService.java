@@ -1,15 +1,16 @@
 package com.hivcare.service;
 
-import com.hivcare.entity.ArvProtocol;
-import com.hivcare.repository.ArvProtocolRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.hivcare.entity.ArvProtocol;
+import com.hivcare.repository.ArvProtocolRepository;
 
 @Service
 @Transactional
@@ -106,9 +107,6 @@ public class ArvProtocolService {
         ArvProtocol protocol = arvProtocolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ARV Protocol not found with id: " + id));
         
-        // Check if protocol is being used in any active treatments
-        // This should be implemented based on business rules
-        
         arvProtocolRepository.delete(protocol);
     }
 
@@ -144,11 +142,5 @@ public class ArvProtocolService {
         return arvProtocolRepository.save(clonedProtocol);
     }
 
-    public long getTotalProtocols() {
-        return arvProtocolRepository.count();
-    }
-
-    public long getActiveProtocolsCount() {
-        return arvProtocolRepository.countActiveProtocols();
-    }
+   
 }
