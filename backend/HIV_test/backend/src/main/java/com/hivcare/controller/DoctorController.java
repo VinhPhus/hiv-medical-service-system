@@ -99,21 +99,7 @@ public class DoctorController {
         return ResponseEntity.ok(doctors);
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
-        try {
-            Doctor savedDoctor = doctorService.createDoctor(doctor);
-            
-            // Create default schedule for the doctor
-            doctorService.createDefaultSchedule(savedDoctor.getId());
-            
-            return ResponseEntity.ok(savedDoctor);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new ApiResponse(false, "Lỗi tạo hồ sơ bác sĩ: " + e.getMessage()));
-        }
-    }
+    
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
