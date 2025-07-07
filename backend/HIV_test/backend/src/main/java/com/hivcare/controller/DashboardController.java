@@ -96,7 +96,51 @@ public class DashboardController {
         return user;
     }
 
-    
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String adminDashboard(Model model, HttpSession session) {
+        try {
+            logger.info("Bắt đầu xử lý admin dashboard");
+            
+            User user = getCurrentUser(session);
+            logger.info("User info: {}", user);
+            
+            // Thêm thông tin người dùng
+            model.addAttribute("user", user);
+            model.addAttribute("adminName", user.getFullName());
+
+            try {
+                // Thêm số liệu thống kê
+                long totalUsers = userService.getTotalUsers();
+                long totalDoctors = doctorService.getTotalDoctors();
+                long totalPatients = patientService.getTotalPatients();
+                List<Appointment> todayAppts = appointmentService.getTodayAppointments();
+
+                logger.info("Thống kê: users={}, doctors={}, patients={}, appointments={}",
+                    totalUsers, totalDoctors, totalPatients, todayAppts != null ? todayAppts.size() : 0);
+
+                model.addAttribute("totalUsers", totalUsers);
+                model.addAttribute("totalDoctors", totalDoctors);
+                model.addAttribute("totalPatients", totalPatients);
+                model.addAttribute("todayAppointments", todayAppts != null ? todayAppts : Collections.emptyList());
+                model.addAttribute("recentActivities", Collections.emptyList());
+            } catch (Exception e) {
+                logger.error("Lỗi khi lấy thống kê: {}", e.getMessage());
+                model.addAttribute("totalUsers", 0);
+                model.addAttribute("totalDoctors", 0);
+                model.addAttribute("totalPatients", 0);
+                model.addAttribute("todayAppointments", Collections.emptyList());
+                model.addAttribute("recentActivities", Collections.emptyList());
+            }
+
+            return "dashboard/admin";
+        } catch (Exception e) {
+            logger.error("Lỗi không xác định trong admin dashboard: {}", e.getMessage());
+            logger.error("Chi tiết lỗi:", e);
+            model.addAttribute("error", "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.");
+            return "error/500";
+        }
+    }
 
     @GetMapping("/doctor")
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
