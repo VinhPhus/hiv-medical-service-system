@@ -1,8 +1,6 @@
 package com.hivcare.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 
 @Entity
 @Table(name = "appointments")
