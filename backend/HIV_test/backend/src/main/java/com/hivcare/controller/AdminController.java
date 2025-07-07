@@ -1,8 +1,6 @@
 package com.hivcare.controller;
 
-import com.hivcare.dto.response.ApiResponse;
-import com.hivcare.entity.User;
-import com.hivcare.service.UserService;
+
 import com.hivcare.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
