@@ -142,5 +142,11 @@ public class ArvProtocolService {
         return arvProtocolRepository.save(clonedProtocol);
     }
 
-   
+    public long getTotalProtocols() {
+        return arvProtocolRepository.count();
+    }
+
+    public long getActiveProtocolsCount() {
+        return arvProtocolRepository.countActiveProtocols();
+    }
 }
