@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title
+      th:text="${medicalRecord.id != null ? 'Chỉnh sửa hồ sơ y tế' : 'Tạo hồ sơ y tế mới'} + ' - HIV Care Management'"
+    >
+      Tạo hồ sơ y tế mới - HIV Care Management
+    </title>
+    <link
+      rel="stylesheet"
+      th:href="@{/css/medical-record/medical-record.css}"
+    />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="container py-4">
+        <div class="card shadow-sm">
+          <!-- Card Header with Title -->
+          <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5
+                class="card-title mb-0"
+                th:text="${medicalRecord.id != null ? 'Cập nhật hồ sơ y tế' : 'Tạo mới hồ sơ y tế'}"
+              >
+                Tạo mới hồ sơ y tế
+              </h5>
+            </div>
+          </div>
+
+          <!-- Alert container -->
+          <div id="alert-container"></div>
+
+          <!-- Form -->
+          <form
+            th:action="@{/medicalRecord/save}"
+            method="post"
+            th:object="${medicalRecord}"
+            class="card-body"
+          >
+            <input type="hidden" th:field="*{id}" />
+
+            <!-- Thông tin cơ bản -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="patientId" class="form-label"
+                    >Bệnh nhân <span class="text-danger">*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="patientId"
+                    th:field="*{patient.id}"
+                    required
+                  >
+                    <option value="">Chọn bệnh nhân</option>
+                    <option
+                      th:each="patient : ${patients}"
+                      th:value="${patient.id}"
+                      th:text="${patient.user != null ? patient.user.fullName + ' (' + patient.patientCode + ') - ' + (patient.medicalRecords != null && !patient.medicalRecords.isEmpty() ? 'Lần khám gần nhất: ' + #temporals.format(patient.medicalRecords[0].visitDate, 'dd/MM/yyyy') : 'Chưa có hồ sơ') : patient.patientCode}"
+                      th:selected="${medicalRecord.patient != null && medicalRecord.patient.id == patient.id}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="doctorId" class="form-label"
+                    >Bác sĩ phụ trách <span class="text-danger">*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="doctorId"
+                    th:field="*{doctor.id}"
+                    required
+                  >
+                    <option value="">Chọn bác sĩ</option>
+                    <option
+                      th:each="doctor : ${doctors}"
+                      th:value="${doctor.id}"
+                      th:text="${doctor.user != null ? doctor.user.fullName : doctor.doctorCode}"
+                      th:selected="${medicalRecord.doctor != null && medicalRecord.doctor.id == doctor.id}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="visitDate" class="form-label"
+                    >Ngày khám <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="visitDate"
+                    th:field="*{visitDate}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="notes" class="form-label">Ghi chú</label>
+                  <textarea
+                    class="form-control"
+                    id="notes"
+                    th:field="*{notes}"
+                    rows="2"
+                  ></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="symptoms" class="form-label">Triệu chứng</label>
+                  <textarea
+                    class="form-control"
+                    id="symptoms"
+                    th:field="*{symptoms}"
+                    rows="2"
+                  ></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="nextVisitDate" class="form-label"
+                    >Ngày tái khám</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="nextVisitDate"
+                    th:field="*{nextVisitDate}"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Thông tin y tế -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h5 class="mb-3">Thông tin y tế</h5>
+                <div class="form-group mb-3">
+                  <label for="diagnosis" class="form-label"
+                    >Chẩn đoán <span class="text-danger">*</span></label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="diagnosis"
+                    th:field="*{diagnosis}"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="treatment" class="form-label"
+                    >Phương pháp điều trị và đơn thuốc</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="treatment"
+                    th:field="*{treatment}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="text-center mt-4">
+              <hr class="mb-4" />
+              <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-button">
+                <i class="fas fa-save me-2"></i>Lưu hồ sơ
+              </button>
+              <a href="/medicalRecord/form" class="btn btn-secondary btn-lg px-5 ms-2">
+                <i class="fas fa-times me-2"></i>Hủy
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/medical-record.js}"></script>
+    </th:block>
+  </body>
+</html>

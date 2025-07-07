@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Thêm Quản Lý</title>
+    <link th:href="@{/css/auth/auth.css}" rel="stylesheet" />
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7">
+                    <div class="card shadow-sm p-4">
+                        <div class="text-center mb-4">
+                            <div class="rounded-top-4 p-4 pb-2" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: #fff;">
+                                <h2 class="fw-bold mb-1"><i class="fas fa-user-tie me-2"></i>Thêm Quản Lý Mới</h2>
+                                <p class="text-white-50 mb-0">Tạo tài khoản cho quản lý mới</p>
+                            </div>
+                        </div>
+                        <form id="addManagerForm" th:action="@{/auth/register}" method="post" autocomplete="off" th:object="${signupRequest}">
+                            <div th:if="${error}" class="alert alert-danger animate-text" th:text="${error}"></div>
+                            <div th:if="${success}" class="alert alert-success animate-text" th:text="${success}"></div>
+
+                            <!-- Thông tin cá nhân -->
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" th:field="*{fullName}" id="fullName" placeholder="Nhập họ và tên" required/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" th:field="*{dateOfBirth}" id="dateOfBirth" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Giới tính</label>
+                                    <select class="form-select" th:field="*{gender}" id="gender" required>
+                                        <option value="">Chọn giới tính</option>
+                                        <option value="MALE">Nam</option>
+                                        <option value="FEMALE">Nữ</option>
+                                        <option value="OTHER">Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin tài khoản -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" th:field="*{username}" id="username" placeholder="Nhập tên đăng nhập" required/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Mật khẩu</label>
+                                    <input type="password" class="form-control" th:field="*{password}" id="password" placeholder="Nhập mật khẩu" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                                    <input type="password" class="form-control" id="confirmPassword" placeholder="Xác nhận mật khẩu" required/>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin liên hệ -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="Nhập email" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" th:field="*{phoneNumber}" id="phoneNumber" placeholder="Nhập số điện thoại" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" th:field="*{address}" id="address" rows="2" placeholder="Nhập địa chỉ"></textarea>
+                            </div>
+
+                            <!-- Hidden field for role -->
+                            <input type="hidden" name="role" th:value="MANAGER"/>
+
+                            <!-- Nút submit -->
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-grow-1">
+                                    Thêm quản lý
+                                </button>
+                                <a th:href="@{/dashboard/admin}" class="btn btn-secondary">
+                                    Quay lại
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/auth.js}"></script>
+        <script>
+            // Kiểm tra mật khẩu xác nhận
+            document.getElementById('addManagerForm').addEventListener('submit', function(e) {
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Mật khẩu xác nhận không khớp!');
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

@@ -1,0 +1,203 @@
+/* CSS Variables */
+:root {
+    /* Colors */
+    --primary-color: #e14242;
+    --primary-hover: #c82f2f;
+    --primary-soft: #fdf0f0;
+    --secondary-color: #6c757d;
+    --success-color: #15b76c;
+    --success-soft: #e6f8f1;
+    --warning-color: #f59f0b;
+    --warning-soft: #fff8e1;
+    --danger-color: #dc3545;
+    --danger-soft: #fdf0f0;
+    --info-color: #0dcaf0;
+    --info-soft: #e6f8fa;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+    --border-color: #dee2e6;
+    --text-color: #495057;
+    --text-muted: #6c757d;
+    
+    /* Shadows */
+    --shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+    --shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    --shadow-lg: 0 1rem 3rem rgba(0,0,0,.175);
+    
+    /* Border Radius */
+    --border-radius-sm: 0.25rem;
+    --border-radius: 0.5rem;
+    --border-radius-lg: 1rem;
+    
+    /* Transitions */
+    --transition-base: all 0.3s ease;
+    --transition-fade: opacity 0.15s linear;
+    --transition-collapse: height 0.35s ease;
+    
+    /* Spacing */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 1rem;
+    --spacing-4: 1.5rem;
+    --spacing-5: 3rem;
+}
+
+/* Kiểu dáng chung cho body và font chữ */
+body {
+    background-color: var(--light-color);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    color: var(--text-color);
+}
+
+/* Lớp hỗ trợ cho body trang chủ */
+.homepage-body {
+    background-color: #ffffff;
+}
+
+/* Kiểu dáng thanh điều hướng */
+.navbar {
+    padding: var(--spacing-2) 0;
+    transition: var(--transition-base);
+    background: var(--primary-color) !important;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #fff !important;
+}
+
+.navbar-brand .fa-heart-pulse {
+    color: #fff;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #fff;
+    margin: 0 var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--border-radius);
+    transition: var(--transition-base);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-color) !important;
+    background: #fff !important;
+}
+
+/* Nút trong thanh điều hướng */
+.btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2) var(--spacing-4);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2) var(--spacing-4);
+    transition: var(--transition-base);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(225, 66, 66, 0.2);
+}
+
+/* Menu dropdown hồ sơ người dùng trong thanh điều hướng */
+.navbar .dropdown-toggle {
+    font-weight: 600;
+}
+
+.badge.bg-primary-soft {
+    background-color: var(--primary-soft);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-2) 0;
+}
+
+.dropdown-item {
+    padding: var(--spacing-2) var(--spacing-4);
+    transition: var(--transition-base);
+}
+
+.dropdown-item:hover {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+}
+
+/* Kiểu dáng chân trang */
+.footer {
+    background: var(--light-bg);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.footer p, .footer small {
+    margin-bottom: 0.2rem;
+    font-size: 0.95em;
+    color: var(--text-muted);
+}
+
+/* Khu vực nội dung chính */
+main {
+    padding-top: var(--spacing-5);
+    padding-bottom: var(--spacing-5);
+}
+
+/* Các lớp tiện ích cho màu nền mềm */
+.bg-primary-soft {
+    background-color: var(--primary-soft);
+    color: var(--primary-color);
+}
+
+.bg-danger-soft {
+    background-color: var(--danger-soft);
+    color: var(--danger-color);
+}
+
+.bg-success-soft {
+    background-color: var(--success-soft);
+    color: var(--success-color);
+}
+
+.bg-warning-soft {
+    background-color: var(--warning-soft);
+    color: var(--warning-color);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+}
+

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Chi tiết Bệnh nhân</title>
+    <link th:href="@{/css/patient/patient.css}" rel="stylesheet" />
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container my-5">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="page-title">
+                        <i class="fas fa-user me-2"></i>Chi tiết bệnh nhân
+                    </h1>
+                    <p class="page-subtitle" th:text="${patient.patientCode + ' - ' + patient.fullName}">P001 - Nguyễn Văn A</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a th:href="@{/patients/{id}/edit(id=${patient.id})}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                    </a>
+                    <a th:href="@{/appointments/new(patientId=${patient.id})}" class="btn btn-outline-success me-2">
+                        <i class="fas fa-calendar-plus me-2"></i>Tạo lịch hẹn
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" onclick="deletePatient()">
+                        <i class="fas fa-trash me-2"></i>Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Avatar and Basic Info -->
+        <div class="row mb-4">
+            <div class="col-md-4 text-center">
+                <div class="patient-avatar">
+                    <img th:if="${patient.avatarUrl != null}" 
+                         th:src="@{${patient.avatarUrl}}"
+                         alt="Avatar"
+                         class="img-fluid rounded-circle"
+                         style="width: 120px; height: 120px; object-fit: cover;">
+                    <img th:unless="${patient.avatarUrl != null}" 
+                         th:src="@{/img/patient/avatar/default-avatar.png}"
+                         alt="Default Avatar"
+                         class="img-fluid rounded-circle"
+                         style="width: 120px; height: 120px; object-fit: cover;">
+                </div>
+                <h4 th:text="${patient.fullName}">Nguyễn Văn A</h4>
+                <p class="text-muted" th:text="'Mã BN: ' + ${patient.patientCode}">Mã BN: P001</p>
+                <span th:class="'status-badge status-' + ${#strings.toLowerCase(patient.status)}"
+                      th:text="${patient.status == 'ACTIVE' ? 'Đang điều trị' : 
+                              (patient.status == 'INACTIVE' ? 'Không hoạt động' : 'Hoàn thành')}">
+                    Đang điều trị
+                </span>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${stats.appointments}">0</div>
+                            <div class="stats-label">Lịch hẹn</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${stats.medicalRecords}">0</div>
+                            <div class="stats-label">Hồ sơ y tế</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${stats.medications}">0</div>
+                            <div class="stats-label">Thuốc đang dùng</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" th:text="${stats.adherenceRate + '%'}">0%</div>
+                            <div class="stats-label">Tuân thủ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-id-card info-icon"></i>Mã bệnh nhân:
+                            </div>
+                            <div class="info-value" th:text="${patient.patientCode}">P001</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-user info-icon"></i>Họ và tên:
+                            </div>
+                            <div class="info-value" th:text="${patient.fullName}">Nguyễn Văn A</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-birthday-cake info-icon"></i>Ngày sinh:
+                            </div>
+                            <div class="info-value">
+                                <span th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}">01/01/1990</span>
+                                <span class="text-muted" th:text="'(' + ${T(java.time.Period).between(patient.dateOfBirth, java.time.LocalDate.now()).getYears()} + ' tuổi)'">
+                                    (35 tuổi)
+                                </span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-venus-mars info-icon"></i>Giới tính:
+                            </div>
+                            <div class="info-value" th:text="${patient.gender == 'MALE' ? 'Nam' : (patient.gender == 'FEMALE' ? 'Nữ' : 'Khác')}">Nam</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-phone info-icon"></i>Số điện thoại:
+                            </div>
+                            <div class="info-value" th:text="${patient.phone}">0123456789</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-envelope info-icon"></i>Email:
+                            </div>
+                            <div class="info-value" th:text="${patient.email}">email@example.com</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-map-marker-alt info-icon"></i>Địa chỉ:
+                            </div>
+                            <div class="info-value" th:text="${patient.address}">123 Đường ABC, Quận 1, TP.HCM</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-calendar-alt info-icon"></i>Ngày đăng ký:
+                            </div>
+                            <div class="info-value" th:text="${#temporals.format(patient.createdAt, 'dd/MM/yyyy')}">01/01/2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-stethoscope me-2"></i>Thông tin y tế
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-diagnoses info-icon"></i>Chẩn đoán:
+                            </div>
+                            <div class="info-value" th:text="${patient.diagnosis}">HIV/AIDS - Giai đoạn 2</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-calendar-check info-icon"></i>Ngày chẩn đoán:
+                            </div>
+                            <div class="info-value" th:text="${#temporals.format(patient.diagnosisDate, 'dd/MM/yyyy')}">15/01/2024</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-user-md info-icon"></i>Bác sĩ điều trị:
+                            </div>
+                            <div class="info-value" th:text="${patient.doctor != null ? patient.doctor.fullName : 'Chưa phân công'}">Dr. Trần Văn A</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-pills info-icon"></i>Thuốc đang dùng:
+                            </div>
+                            <div class="info-value" th:text="${patient.currentMedications}">TDF + 3TC + EFV</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-notes-medical info-icon"></i>Ghi chú:
+                            </div>
+                            <div class="info-value" th:text="${patient.note}">Ghi chú về tình trạng bệnh nhân</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar me-2"></i>Lịch hẹn gần đây
+                    </h5>
+                    <a th:href="@{/appointments(patientId=${patient.id})}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-1"></i>Xem tất cả
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Giờ</th>
+                                <th>Loại</th>
+                                <th>Bác sĩ</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="appointment : ${recentAppointments}">
+                                <td th:text="${#temporals.format(appointment.appointmentDate, 'dd/MM/yyyy')}">15/03/2024</td>
+                                <td th:text="${appointment.appointmentTime}">09:00</td>
+                                <td th:text="${appointment.type}">Khám định kỳ</td>
+                                <td th:text="${appointment.doctor.fullName}">Dr. Trần Văn A</td>
+                                <td>
+                                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(appointment.status)}"
+                                          th:text="${appointment.status}">
+                                        Đã xác nhận
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/appointments/{id}(id=${appointment.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentAppointments)}">
+                                <td colspan="6" class="text-center">Không có lịch hẹn nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Records -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-medical me-2"></i>Hồ sơ y tế
+                    </h5>
+                    <a th:href="@{/medical-records(patientId=${patient.id})}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-1"></i>Xem tất cả
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mã hồ sơ</th>
+                                <th>Ngày tạo</th>
+                                <th>Chẩn đoán</th>
+                                <th>Bác sĩ</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="record : ${recentMedicalRecords}">
+                                <td th:text="${record.recordCode}">MR001</td>
+                                <td th:text="${#temporals.format(record.createdAt, 'dd/MM/yyyy')}">15/03/2024</td>
+                                <td th:text="${record.diagnosis}">Khám định kỳ</td>
+                                <td th:text="${record.doctor.fullName}">Dr. Trần Văn A</td>
+                                <td>
+                                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(record.status)}"
+                                          th:text="${record.status}">
+                                        Hoàn thành
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/medical-records/{id}(id=${record.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentMedicalRecords)}">
+                                <td colspan="6" class="text-center">Không có hồ sơ y tế nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa bệnh nhân này không?</p>
+                <p class="text-danger"><small>Lưu ý: Hành động này không thể hoàn tác.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form th:action="@{/patients/{id}/delete(id=${patient.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Scripts -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/patient/patient.js}"></script>
+</th:block>
+
+</body>
+</html>

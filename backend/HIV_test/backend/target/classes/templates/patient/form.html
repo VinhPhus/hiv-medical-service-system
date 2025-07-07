@@ -1,0 +1,182 @@
+<!-- Form thêm/sửa bệnh nhân sẽ được phát triển sau -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${patient.id == null ? 'Thêm Bệnh nhân mới' : 'Cập nhật Bệnh nhân'}">Thêm Bệnh nhân mới</title>
+    <link th:href="@{/css/patient/patient.css}" rel="stylesheet" />
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="patient-card">
+                    <!-- Card Header -->
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <a th:href="@{/patients}" class="btn btn-light me-3">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-plus me-2"></i>
+                                <span th:text="${patient.id == null ? 'Thêm Bệnh nhân mới' : 'Cập nhật Bệnh nhân'}">
+                                    Thêm Bệnh nhân mới
+                                </span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <form th:action="${patient.id == null ? '/patients/save' : '/patients/update'}" 
+                              th:object="${patient}" 
+                              method="post"
+                              class="needs-validation"
+                              novalidate>
+                            
+                            <input type="hidden" th:field="*{id}" />
+
+                            <!-- Thông tin cơ bản -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
+                                    </h5>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Họ và tên *</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="fullName" 
+                                           th:field="*{fullName}"
+                                           required>
+                                    <div class="invalid-feedback">Vui lòng nhập họ tên</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="dateOfBirth" class="form-label">Ngày sinh *</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           id="dateOfBirth" 
+                                           th:field="*{dateOfBirth}"
+                                           required>
+                                    <div class="invalid-feedback">Vui lòng chọn ngày sinh</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Giới tính *</label>
+                                    <select class="form-select" 
+                                            id="gender" 
+                                            th:field="*{gender}"
+                                            required>
+                                        <option value="">Chọn giới tính</option>
+                                        <option value="MALE">Nam</option>
+                                        <option value="FEMALE">Nữ</option>
+                                        <option value="OTHER">Khác</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn giới tính</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Số điện thoại *</label>
+                                    <input type="tel" 
+                                           class="form-control" 
+                                           id="phone" 
+                                           th:field="*{phone}"
+                                           pattern="[0-9]{10,11}"
+                                           required>
+                                    <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           th:field="*{email}">
+                                    <div class="invalid-feedback">Vui lòng nhập email hợp lệ</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="address" class="form-label">Địa chỉ *</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="address" 
+                                           th:field="*{address}"
+                                           required>
+                                    <div class="invalid-feedback">Vui lòng nhập địa chỉ</div>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin điều trị -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-stethoscope me-2"></i>Thông tin điều trị
+                                    </h5>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="treatmentStartDate" class="form-label">Ngày bắt đầu điều trị</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           id="treatmentStartDate" 
+                                           th:field="*{treatmentStartDate}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">Trạng thái</label>
+                                    <select class="form-select" 
+                                            id="status" 
+                                            th:field="*{status}">
+                                        <option value="ACTIVE">Đang điều trị</option>
+                                        <option value="INACTIVE">Không hoạt động</option>
+                                        <option value="COMPLETED">Hoàn thành</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="insuranceNumber" class="form-label">Số BHYT</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="insuranceNumber" 
+                                           th:field="*{insuranceNumber}">
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="note" class="form-label">Ghi chú</label>
+                                    <textarea class="form-control" 
+                                              id="note" 
+                                              th:field="*{note}"
+                                              rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-save me-2"></i>Lưu lại
+                                </button>
+                                <a th:href="@{/patients}" class="btn btn-light">
+                                    <i class="fas fa-times me-2"></i>Hủy
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Scripts -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/patient/patient.js}"></script>
+</th:block>
+
+</body>
+</html>

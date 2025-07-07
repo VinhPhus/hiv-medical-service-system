@@ -1,0 +1,138 @@
+<!-- Form thêm/sửa kết quả xét nghiệm sẽ được phát triển sau -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${testResult.id != null ? 'Chỉnh sửa kết quả xét nghiệm' : 'Tạo kết quả xét nghiệm mới'} + ' - HIV Care Management'">Tạo kết quả xét nghiệm mới - HIV Care Management</title>
+    <th:block layout:fragment="css">
+        <link th:href="@{/css/test-result/test-result.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-4">
+            <div class="card shadow-sm">
+                <!-- Card Header with Title -->
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0" th:text="${testResult.id != null ? 'Cập nhật kết quả xét nghiệm' : 'Tạo mới kết quả xét nghiệm'}">
+                            Tạo mới kết quả xét nghiệm
+                        </h5>
+                        <a href="/testResult/form" class="btn btn-danger" th:if="${testResult.id != null}">
+                            <i class="fas fa-plus-circle me-2"></i>Tạo kết quả mới
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Alert container -->
+                <div id="alert-container"></div>
+
+                <!-- Form -->
+                <form th:action="@{/testResult/save}" method="post" th:object="${testResult}" enctype="multipart/form-data" class="card-body">
+                    <input type="hidden" th:field="*{id}" />
+                    
+                    <!-- Thông tin cơ bản -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="patientId" class="form-label">Bệnh nhân <span class="text-danger">*</span></label>
+                                <select class="form-select" id="patientId" th:field="*{patient.id}" required>
+                                    <option value="">Chọn bệnh nhân</option>
+                                    <option th:each="patient : ${patients}" 
+                                            th:value="${patient.id}" 
+                                            th:text="${patient.user.fullName}"
+                                            th:selected="${testResult.patient != null && testResult.patient.id == patient.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="testType" class="form-label">Loại xét nghiệm <span class="text-danger">*</span></label>
+                                <select class="form-select" id="testType" th:field="*{testType}" required>
+                                    <option value="">Chọn loại xét nghiệm</option>
+                                    <option th:each="type : ${testTypes}" 
+                                            th:value="${type}" 
+                                            th:text="${type}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="testDate" class="form-label">Ngày xét nghiệm <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="testDate" th:field="*{testDate}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="resultValue" class="form-label">Kết quả</label>
+                                <input type="text" class="form-control" id="resultValue" th:field="*{resultValue}">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="unit" class="form-label">Đơn vị</label>
+                                <input type="text" class="form-control" id="unit" th:field="*{unit}">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="referenceRange" class="form-label">Khoảng tham chiếu</label>
+                                <input type="text" class="form-control" id="referenceRange" th:field="*{referenceRange}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin bổ sung -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="status" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="status" th:field="*{status}">
+                                    <option th:each="status : ${testStatuses}" 
+                                            th:value="${status}" 
+                                            th:text="${status}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="labTechnician" class="form-label">Kỹ thuật viên</label>
+                                <input type="text" class="form-control" id="labTechnician" th:field="*{labTechnician}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="notes" class="form-label">Ghi chú</label>
+                                <textarea class="form-control" id="notes" th:field="*{notes}" rows="3"></textarea>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="file" class="form-label">Tệp đính kèm</label>
+                                <input type="file" class="form-control" id="file" name="file">
+                                <small class="text-muted">Hỗ trợ các định dạng: PDF, JPG, PNG (tối đa 5MB)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form actions -->
+                    <div class="form-actions mt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="/testResult/list" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                </a>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4" id="submit-button">
+                                    <i class="fas fa-save me-2"></i>
+                                    <span th:text="${testResult.id != null ? 'Lưu thay đổi' : 'Lưu kết quả'}">Lưu kết quả</span>
+                                </button>
+                                <a href="/testResult/form" class="btn btn-danger" th:if="${testResult.id != null}">
+                                    <i class="fas fa-plus-circle me-2"></i>Tạo kết quả mới
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/test-result.js}"></script>
+    </th:block>
+</body>
+</html>

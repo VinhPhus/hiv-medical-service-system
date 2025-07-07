@@ -1,49 +1,46 @@
 package com.hivcare.controller;
 
-import com.hivcare.service.ApiService;
-import com.hivcare.service.AppointmentService;
-import com.hivcare.service.TestResultService;
-import com.hivcare.service.PatientService;
-import com.hivcare.service.MedicalRecordService;
-import com.hivcare.service.TreatmentService;
-import com.hivcare.service.UserService;
-import com.hivcare.service.DoctorService;
-import com.hivcare.entity.Appointment;
-import com.hivcare.entity.TestResult;
-import com.hivcare.entity.Patient;
-import com.hivcare.entity.Doctor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import jakarta.servlet.http.HttpSession;
-import java.util.Map;
-import java.util.List;
-import com.hivcare.entity.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.Optional;
-import com.hivcare.entity.MedicalRecord;
-import com.hivcare.entity.Treatment;
-import java.util.Collections;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import java.util.HashMap;
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hivcare.entity.Appointment;
+import com.hivcare.entity.Doctor;
+import com.hivcare.entity.MedicalRecord;
+import com.hivcare.entity.Patient;
+import com.hivcare.entity.TestResult;
+import com.hivcare.entity.Treatment;
+import com.hivcare.entity.User;
+import com.hivcare.service.ApiService;
+import com.hivcare.service.AppointmentService;
+import com.hivcare.service.DoctorService;
+import com.hivcare.service.MedicalRecordService;
+import com.hivcare.service.PatientService;
+import com.hivcare.service.TestResultService;
+import com.hivcare.service.TreatmentService;
+import com.hivcare.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -108,12 +105,12 @@ public class DashboardController {
             User user = getCurrentUser(session);
             logger.info("User info: {}", user);
             
-            // Add user info
+            // Thêm thông tin người dùng
             model.addAttribute("user", user);
             model.addAttribute("adminName", user.getFullName());
 
             try {
-                // Add statistics
+                // Thêm số liệu thống kê
                 long totalUsers = userService.getTotalUsers();
                 long totalDoctors = doctorService.getTotalDoctors();
                 long totalPatients = patientService.getTotalPatients();
@@ -126,10 +123,9 @@ public class DashboardController {
                 model.addAttribute("totalDoctors", totalDoctors);
                 model.addAttribute("totalPatients", totalPatients);
                 model.addAttribute("todayAppointments", todayAppts != null ? todayAppts : Collections.emptyList());
-                model.addAttribute("recentActivities", Collections.emptyList()); // Tạm thời để trống
+                model.addAttribute("recentActivities", Collections.emptyList());
             } catch (Exception e) {
                 logger.error("Lỗi khi lấy thống kê: {}", e.getMessage());
-                // Vẫn tiếp tục với giá trị mặc định nếu có lỗi
                 model.addAttribute("totalUsers", 0);
                 model.addAttribute("totalDoctors", 0);
                 model.addAttribute("totalPatients", 0);
@@ -159,7 +155,7 @@ public class DashboardController {
             User user = getCurrentUser(session);
             logger.info("User info: {}", user);
             
-            // Add user info
+            // Thêm thông tin người dùng
             model.addAttribute("user", user);
             model.addAttribute("doctorName", user.getFullName());
 
@@ -299,12 +295,12 @@ public class DashboardController {
             User user = getCurrentUser(session);
             logger.info("User info: {}", user);
             
-            // Add user info
+            // Thêm thông tin người dùng
             model.addAttribute("user", user);
             model.addAttribute("staffName", user.getFullName());
 
             try {
-                // Add statistics
+                // Thêm số liệu thống kê
                 List<Appointment> todayAppts = appointmentService.getTodayAppointments();
                 List<Appointment> upcomingAppts = appointmentService.getUpcomingAppointments();
                 long pendingAppointments = appointmentService.countPendingAppointments();
@@ -359,7 +355,7 @@ public class DashboardController {
             User user = getCurrentUser(session);
             logger.info("User info: {}", user);
             
-            // Add user info
+            // Thêm thông tin người dùng
             model.addAttribute("user", user);
             model.addAttribute("patientName", user.getFullName());
 

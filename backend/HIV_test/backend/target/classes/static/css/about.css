@@ -1,0 +1,54 @@
+/* ===== STYLES CHO TRANG ABOUT ===== */
+        :root {
+            --primary-color: #dc3545;
+            --primary-hover: #c82333;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--light-bg);
+        }
+
+        .about-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #e74c3c 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .about-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .icon-box {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .list-unstyled .fas {
+            color: #28a745;
+        }

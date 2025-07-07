@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi" 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Danh sách hồ sơ y tế - HIV Care</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Page specific CSS -->
+    <link th:href="@{/css/medical-record.css}" rel="stylesheet">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="medical-record-container">
+            <div class="container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h1 class="page-title">
+                                <i class="fas fa-file-medical me-2"></i>Danh sách hồ sơ y tế
+                            </h1>
+                            <p class="page-subtitle">Quản lý hồ sơ y tế của bệnh nhân</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <a th:href="@{/medical-record/new}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Tạo hồ sơ mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Box -->
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm hồ sơ y tế...">
+                </div>
+
+                <!-- Medical Records List -->
+                <div class="records-list">
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(medicalRecords)}" class="text-center py-5">
+                        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Chưa có hồ sơ y tế nào</h5>
+                        <p class="text-muted">Hãy tạo hồ sơ y tế mới bằng cách nhấn vào nút "Tạo hồ sơ mới"</p>
+                    </div>
+
+                    <!-- Records -->
+                    <div th:each="record : ${medicalRecords}" class="record-card">
+                        <div class="record-header">
+                            <div class="record-id" th:text="${'#' + record.code}">
+                                #MR001
+                            </div>
+                            <div class="record-date">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                <span th:text="${#temporals.format(record.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                    15/01/2024 14:30
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="patient-info">
+                            <div class="patient-avatar" th:text="${#strings.substring(record.patient.fullName, 0, 1)}">
+                                N
+                            </div>
+                            <div class="patient-details">
+                                <h6 th:text="${record.patient.fullName}">Nguyễn Văn An</h6>
+                                <p th:text="${record.patient.code}">P001</p>
+                            </div>
+                        </div>
+
+                        <div class="record-details">
+                            <div class="detail-item">
+                                <i class="fas fa-stethoscope"></i>
+                                <span th:text="${record.diagnosis}">HIV/AIDS - Giai đoạn 2</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user-md"></i>
+                                <span th:text="${'BS. ' + record.doctor.fullName}">BS. Trần Văn B</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-pills"></i>
+                                <span th:text="${record.treatment}">ARV therapy</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${record.examinationType}">Tái khám</span>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a th:href="@{'/medical-record/' + ${record.id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Chi tiết
+                            </a>
+                            <a th:href="@{'/medical-record/edit/' + ${record.id}}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit me-1"></i>Sửa
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    th:onclick="'deleteRecord(\'' + ${record.id} + '\')'">
+                                <i class="fas fa-trash me-1"></i>Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}" class="mt-4">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/medical-record(page=${currentPage - 1})}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:href="@{/medical-record(page=${i})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/medical-record(page=${currentPage + 1})}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa hồ sơ y tế này không?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page specific scripts -->
+    <th:block layout:fragment="page-scripts">
+        <script th:src="@{/js/medical-record.js}"></script>
+    </th:block>
+</body>
+</html>

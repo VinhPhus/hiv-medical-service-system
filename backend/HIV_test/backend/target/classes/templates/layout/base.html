@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi" 
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">HIV Care Management</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link th:href="@{/css/app.css}" rel="stylesheet" type="text/css">
+    
+    <!-- Additional CSS -->
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body th:data-role="${session.user != null ? session.user.role : ''}">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-heart-pulse me-2"></i>HIV Care
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">
+                            <i class="fas fa-home me-1"></i>Trang chủ
+                        </a>
+                    </li>
+                    
+                    <!-- Menu cho người dùng đã đăng nhập -->
+                    <th:block sec:authorize="isAuthenticated()">
+                        <!-- Menu cho ADMIN, DOCTOR, STAFF -->
+                        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR', 'STAFF', 'MANAGER')">
+                            <a class="nav-link" th:href="@{/patient/list}">
+                                <i class="fas fa-users me-1"></i>Bệnh nhân
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/appointment/list}">
+                                <i class="fas fa-calendar me-1"></i>Lịch hẹn
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/medicalRecord/list}">
+                                <i class="fas fa-file-medical me-1"></i>Hồ sơ y tế
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/testResult/list}">
+                                <i class="fas fa-vial me-1"></i>Kết quả xét nghiệm
+                            </a>
+                        </li>
+                        
+                        <!-- Menu ARV chỉ hiển thị cho ADMIN, DOCTOR, STAFF -->
+                        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR', 'STAFF', 'MANAGER')">
+                            <a class="nav-link" th:href="@{/arvProtocol/list}">
+                                <i class="fas fa-notes-medical me-1"></i>Phác đồ ARV
+                            </a>
+                        </li>
+                    </th:block>
+
+                    <!-- Menu thông tin người dùng -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${session.user.fullName}">Tài khoản</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{'/dashboard/' + ${session.user != null ? #strings.toLowerCase(session.user.role.name()) : ''}}">
+                                    <i class="fas fa-user me-1"></i>Thông tin cá nhân
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Menu cho người chưa đăng nhập -->
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/about}">
+                                <i class="fas fa-info-circle me-1"></i>Giới thiệu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/contact}">
+                                <i class="fas fa-envelope me-1"></i>Liên hệ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/auth/login}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                            </a>
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <th:block layout:fragment="content">
+            <!-- Nội dung trang sẽ được thay thế ở đây -->
+        </th:block>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="footer-content text-center">
+                <p>&copy; 2024 HIV Care Management. Tất cả quyền được bảo lưu.</p>
+                <p>Hệ thống quản lý chăm sóc sức khỏe cho bệnh nhân HIV/AIDS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Custom JavaScript -->  
+    <script th:src="@{/js/app.js}"></script>
+
+    <!-- Additional JavaScript -->
+    <th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

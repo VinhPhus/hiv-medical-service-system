@@ -1,0 +1,429 @@
+/* ===== STYLES CHO DASHBOARD BÁC SĨ ===== */
+
+:root {
+    --primary-color: #dc3545;
+    --primary-hover: #c82333;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+    --light-bg: #f8f9fa;
+    --border-color: #dee2e6;
+    --text-muted: #6c757d;
+    --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--light-bg);
+    color: #333;
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #e74c3c 100%);
+    box-shadow: var(--shadow);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+main {
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.page-header {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.page-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Quick Actions Buttons */
+.d-grid.gap-2 .btn {
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-width: 2px;
+}
+
+.d-grid.gap-2 .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.d-grid.gap-2 .btn i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+/* Specific button styles */
+.btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-outline-success {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.btn-outline-success:hover {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-outline-info {
+    border-color: var(--info-color);
+    color: var(--info-color);
+}
+
+.btn-outline-info:hover {
+    background: var(--info-color);
+    color: white;
+}
+
+.btn-outline-secondary {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-outline-dark {
+    border-color: var(--dark-color);
+    color: var(--dark-color);
+}
+
+.btn-outline-dark:hover {
+    background: var(--dark-color);
+    color: white;
+}
+
+.btn-outline-warning {
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+.btn-outline-warning:hover {
+    background: var(--warning-color);
+    color: white;
+}
+
+/* Hover effect with gradient */
+.d-grid.gap-2 .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.d-grid.gap-2 .btn:hover::before {
+    left: 100%;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #e74c3c 100%);
+    color: white;
+    border-radius: 1rem 1rem 0 0 !important;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-title {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* Stats Card */
+.stats-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stats-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table styles */
+.table {
+    background: white;
+    border-radius: 1rem;
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+}
+
+.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+}
+
+.status-urgent {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.status-completed {
+    background: rgba(108, 117, 125, 0.1);
+    color: var(--secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .d-grid.gap-2 .btn {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .d-grid.gap-2 .btn i {
+        font-size: 1rem;
+    }
+}
+
+/* Common Dashboard Styles */
+.dashboard-container {
+    padding: 2rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: #7f8c8d;
+}
+
+/* Stats Cards */
+.stat-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card .badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/* Colors for different stats */
+.stat-primary {
+    color: #3498db;
+}
+
+.stat-success {
+    color: #2ecc71;
+}
+
+.stat-info {
+    color: #00bcd4;
+}
+
+.stat-warning {
+    color: #f1c40f;
+}
+
+/* Subtle backgrounds for badges */
+.bg-primary-subtle {
+    background-color: #ebf5fb;
+}
+
+.bg-success-subtle {
+    background-color: #eafaf1;
+}
+
+.bg-info-subtle {
+    background-color: #e0f7fa;
+}
+
+.bg-warning-subtle {
+    background-color: #fef9e7;
+}
+
+/* Action Buttons */
+.action-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Recent Activities Table */
+.activities-table {
+    margin-top: 2rem;
+}
+
+.activities-table th {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.activities-table td {
+    vertical-align: middle;
+}
+
+.activities-table .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #95a5a6;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .action-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}

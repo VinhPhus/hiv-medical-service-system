@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Về Chúng Tôi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/about.css}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="about-page">
+            <div class="about-header">
+                <div class="container">
+                    <h1>Về Chúng Tôi</h1>
+                    <p class="lead">Trung tâm chăm sóc sức khỏe HIV/AIDS hiện đại, tận tâm và bảo mật.</p>
+                    <a th:href="@{/}" class="btn btn-light mt-3"><i class="fas fa-arrow-left me-2"></i> Quay lại trang chủ</a>
+                </div>
+            </div>
+            <div class="container py-5">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <!-- Giới thiệu -->
+                        <div class="card mb-5">
+                            <div class="card-body text-center">
+                                <h2 class="h4 mb-3">Trung Tâm Chăm Sóc Sức Khỏe HIV</h2>
+                                <p class="lead">
+                                    Chúng tôi là trung tâm chăm sóc sức khỏe chuyên biệt, cung cấp các
+                                    dịch vụ toàn diện cho người nhiễm HIV/AIDS với cam kết bảo mật và
+                                    tôn trọng quyền riêng tư.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Sứ mệnh và Tầm nhìn -->
+                        <div class="row mb-5">
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100 text-center">
+                                    <div class="card-body">
+                                        <div class="icon-box">
+                                            <i class="fas fa-bullseye"></i>
+                                        </div>
+                                        <h3 class="h5 mb-3">Sứ Mệnh</h3>
+                                        <p>
+                                            Cung cấp dịch vụ chăm sóc sức khỏe chất lượng cao, hỗ trợ tâm
+                                            lý và điều trị toàn diện cho người nhiễm HIV/AIDS, góp phần
+                                            nâng cao chất lượng cuộc sống và giảm kỳ thị trong cộng đồng.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100 text-center">
+                                    <div class="card-body">
+                                        <div class="icon-box">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <h3 class="h5 mb-3">Tầm Nhìn</h3>
+                                        <p>
+                                            Trở thành trung tâm chăm sóc sức khỏe HIV/AIDS hàng đầu, tiên
+                                            phong trong việc áp dụng các phương pháp điều trị hiện đại và
+                                            xây dựng môi trường thân thiện, không kỳ thị.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Đội ngũ -->
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <h3 class="h4 mb-4 text-center">Đội Ngũ Chuyên Môn</h3>
+                                <div class="row g-4 text-center">
+                                    <div class="col-md-4">
+                                        <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                                        <h4 class="h6">Bác Sĩ Chuyên Khoa</h4>
+                                        <p class="small text-muted">
+                                            Đội ngũ bác sĩ giàu kinh nghiệm trong điều trị HIV/AIDS.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                                        <h4 class="h6">Tư Vấn Viên</h4>
+                                        <p class="small text-muted">
+                                            Chuyên gia tư vấn tâm lý và hỗ trợ bệnh nhân.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fas fa-flask fa-3x text-primary mb-3"></i>
+                                        <h4 class="h6">Kỹ Thuật Viên</h4>
+                                        <p class="small text-muted">
+                                            Đội ngũ kỹ thuật viên xét nghiệm chuyên nghiệp.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Cam kết -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="h4 mb-4 text-center">Cam Kết Của Chúng Tôi</h3>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled">
+                                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Bảo mật thông tin tuyệt đối</li>
+                                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Chất lượng dịch vụ hàng đầu</li>
+                                            <li class="d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Hỗ trợ tận tâm 24/7</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled">
+                                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Không kỳ thị, phân biệt đối xử</li>
+                                            <li class="mb-3 d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Chi phí hợp lý, minh bạch</li>
+                                            <li class="d-flex align-items-center"><i class="fas fa-check-circle me-2"></i> Cập nhật phương pháp điều trị mới</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

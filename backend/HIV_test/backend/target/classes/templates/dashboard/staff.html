@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+>
+  <head>
+    <title>Bảng điều khiển - Nhân viên</title>
+  </head>
+
+  <body>
+    <th:block layout:fragment="css">
+      <link rel="stylesheet" th:href="@{/css/dashboard/dashboard.css}">
+    </th:block>
+
+    <th:block layout:fragment="content">
+      <!-- Main Content -->
+      <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard Nhân viên
+          </h1>
+          <p class="page-subtitle">Tổng quan công việc và nhiệm vụ của bạn</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+          <!-- Thẻ: Lịch hẹn -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--primary-color);">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="stats-number" th:text="${todayAppointments != null ? todayAppointments.size() : 0}">0</div>
+              <div class="stats-label">Lịch hẹn hôm nay</div>
+              <a th:href="@{/appointment/list}" class="btn btn-outline-primary mt-3 w-100">Xem lịch hẹn</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Bệnh nhân -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--success-color);">
+                <i class="fas fa-user-injured"></i>
+              </div>
+              <div class="stats-number" th:text="${totalPatients ?: 0}">0</div>
+              <div class="stats-label">Tổng số bệnh nhân</div>
+              <a th:href="@{/patient/list}" class="btn btn-outline-success mt-3 w-100">Xem danh sách</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Xét nghiệm -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--info-color);">
+                <i class="fas fa-vials"></i>
+              </div>
+              <div class="stats-number" th:text="${pendingTests != null ? pendingTests.size() : 0}">0</div>
+              <div class="stats-label">Xét nghiệm chờ xử lý</div>
+              <a th:href="@{/testResult/list}" class="btn btn-outline-info mt-3 w-100">Xem kết quả</a>
+            </div>
+          </div>
+
+          <!-- Thẻ: Lịch hẹn sắp tới -->
+          <div class="col-xl-3 col-md-6">
+            <div class="stats-card">
+              <div class="stats-icon" style="background: var(--warning-color);">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stats-number" th:text="${upcomingAppointments != null ? upcomingAppointments.size() : 0}">0</div>
+              <div class="stats-label">Lịch hẹn sắp tới</div>
+              <a th:href="@{/appointment/list}" class="btn btn-outline-warning mt-3 w-100">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Quick Actions -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="d-grid gap-2">
+                  <a th:href="@{/appointment/form}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar-plus me-2"></i>Thêm lịch hẹn
+                  </a>
+                  <a th:href="@{/testResult/form}" class="btn btn-outline-info">
+                    <i class="fas fa-vial me-2"></i>Thêm xét nghiệm
+                  </a>
+                  <a th:href="@{/patient/list}" class="btn btn-outline-success">
+                    <i class="fas fa-user-plus me-2"></i>Hỗ trợ bệnh nhân
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appointments List -->
+          <div class="col-md-8 mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-tasks me-2"></i>Lịch hẹn hiện có
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Thời gian</th>
+                        <th>Bệnh nhân</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:if="${#lists.isEmpty(todayAppointments)}">
+                        <td colspan="5" class="text-center">Không có lịch hẹn nào hôm nay</td>
+                      </tr>
+                      <tr th:each="appt : ${todayAppointments}">
+                        <td th:text="${#temporals.format(appt.appointmentTime, 'HH:mm')}">09:00</td>
+                        <td th:text="${appt.patient.fullName}">Nguyễn Văn A</td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info" th:text="${appt.type}">Khám định kỳ</span>
+                        </td>
+                        <td>
+                          <span th:class="${'badge ' + (appt.status == 'PENDING' ? 'bg-warning' : 
+                                                      appt.status == 'CONFIRMED' ? 'bg-success' : 
+                                                      appt.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                th:text="${appt.status}">Đã xác nhận</span>
+                        </td>
+                        <td>
+                          <a th:href="@{/appointment/detail/{id}(id=${appt.id})}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/dashboard/dashboard.js}"></script>
+    </th:block>
+  </body>
+</html>

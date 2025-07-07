@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${protocol != null ? 'Chỉnh sửa phác đồ ARV' : 'Thêm phác đồ ARV mới'} + ' - HIV Care Management'">
+        Thêm phác đồ ARV mới - HIV Care Management
+    </title>
+    <link rel="stylesheet" th:href="@{/css/arvProtocol/arvProtocol.css}">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h1 class="page-title" th:text="${protocol != null ? 'Chỉnh sửa phác đồ ARV' : 'Thêm phác đồ ARV mới'}">
+                                Thêm phác đồ ARV mới
+                            </h1>
+                            <p class="page-subtitle">Điền đầy đủ thông tin phác đồ ARV</p>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/arvProtocol/list" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocol Form -->
+                <div class="card">
+                    <div class="card-body">
+                        <form id="protocol-form" class="needs-validation" novalidate>
+                            <input type="hidden" id="protocol-id" th:value="${protocol?.id}">
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Tên phác đồ <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                               th:value="${protocol?.name}" required
+                                               placeholder="Nhập tên phác đồ">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập tên phác đồ
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="code" class="form-label">Mã phác đồ <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="code" name="code"
+                                               th:value="${protocol?.code}" required
+                                               placeholder="Nhập mã phác đồ">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập mã phác đồ
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="description" class="form-label">Mô tả</label>
+                                        <textarea class="form-control" id="description" name="description"
+                                                  rows="3" placeholder="Nhập mô tả phác đồ"
+                                                  th:text="${protocol?.description}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="category" class="form-label">Đối tượng áp dụng <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="category" name="category" required>
+                                            <option value="">Chọn đối tượng</option>
+                                            <option value="ADULT" th:selected="${protocol?.patientCategory == 'ADULT'}">Người lớn</option>
+                                            <option value="CHILD" th:selected="${protocol?.patientCategory == 'CHILD'}">Trẻ em</option>
+                                            <option value="PREGNANT" th:selected="${protocol?.patientCategory == 'PREGNANT'}">Phụ nữ mang thai</option>
+                                            <option value="SPECIAL" th:selected="${protocol?.patientCategory == 'SPECIAL'}">Đối tượng đặc biệt</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Vui lòng chọn đối tượng áp dụng
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="dosage" class="form-label">Liều lượng (lần/ngày) <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="dosage" name="dosage"
+                                               th:value="${protocol?.dosagePerDay}" required min="1"
+                                               placeholder="Số lần uống mỗi ngày">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập liều lượng hợp lệ
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="duration" class="form-label">Thời gian (tuần) <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="duration" name="duration"
+                                               th:value="${protocol?.recommendedDurationWeeks}" required min="1"
+                                               placeholder="Số tuần điều trị">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập thời gian điều trị hợp lệ
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="medications" class="form-label">Thuốc sử dụng <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="medications" name="medications"
+                                                  rows="3" required placeholder="Nhập thông tin thuốc (định dạng JSON)"
+                                                  th:text="${protocol?.medications}"></textarea>
+                                        <div class="form-text">
+                                            Ví dụ: {"TDF": "300mg", "3TC": "300mg", "DTG": "50mg"}
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập thông tin thuốc
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="contraindications" class="form-label">Chống chỉ định</label>
+                                        <textarea class="form-control" id="contraindications" name="contraindications"
+                                                  rows="3" placeholder="Nhập các chống chỉ định"
+                                                  th:text="${protocol?.contraindications}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="side-effects" class="form-label">Tác dụng phụ</label>
+                                        <textarea class="form-control" id="side-effects" name="sideEffects"
+                                                  rows="3" placeholder="Nhập các tác dụng phụ có thể gặp"
+                                                  th:text="${protocol?.sideEffects}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="monitoring" class="form-label">Yêu cầu theo dõi</label>
+                                        <textarea class="form-control" id="monitoring" name="monitoringRequirements"
+                                                  rows="3" placeholder="Nhập các yêu cầu theo dõi"
+                                                  th:text="${protocol?.monitoringRequirements}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="active" name="active"
+                                               th:checked="${protocol == null || protocol.active}">
+                                        <label class="form-check-label" for="active">
+                                            Kích hoạt phác đồ
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="window.history.back()">
+                                    Hủy
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    <span th:text="${protocol != null ? 'Cập nhật' : 'Lưu'}">Lưu</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/arvProtocol-form.js}"></script>
+    </th:block>
+</body>
+</html>

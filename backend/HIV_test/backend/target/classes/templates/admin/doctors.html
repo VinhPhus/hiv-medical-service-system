@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/base}">
+
+<head>
+    <title>Danh sách bác sĩ - HIV Care Management</title>
+    <style>
+        .doctor-list {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .action-buttons .btn {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-user-md me-2"></i>Danh sách bác sĩ
+                </h1>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm bác sĩ..." id="searchInput">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="specialtyFilter">
+                        <option value="">Tất cả chuyên khoa</option>
+                        <option value="Nội khoa">Nội khoa</option>
+                        <option value="Nhi khoa">Nhi khoa</option>
+                        <option value="Da liễu">Da liễu</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="INACTIVE">Ngừng hoạt động</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Doctor List -->
+            <div class="doctor-list">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mã bác sĩ</th>
+                                <th>Họ tên</th>
+                                <th>Chuyên khoa</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="doctor : ${doctors}">
+                                <td th:text="${doctor.doctorCode}"></td>
+                                <td th:text="${doctor.user.fullName}"></td>
+                                <td th:text="${doctor.specialization}"></td>
+                                <td th:text="${doctor.user.email}"></td>
+                                <td th:text="${doctor.user.phoneNumber}"></td>
+                                <td>
+                                    <span th:class="'status-badge ' + (${doctor.status.name() == 'ACTIVE'} ? 'status-active' : 'status-inactive')"
+                                          th:text="${doctor.status.name()}">
+                                    </span>
+                                </td>
+                                <td class="action-buttons">
+                                    <a th:href="@{/admin/doctors/{id}/edit(id=${doctor.id})}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-danger" 
+                                            th:onclick="'deleteDoctor(' + ${doctor.id} + ')'">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${doctors.totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${doctors.first ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/admin/doctors(page=${doctors.number - 1})}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, doctors.totalPages - 1)}"
+                            th:classappend="${i == doctors.number ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/admin/doctors(page=${i})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${doctors.last ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/admin/doctors(page=${doctors.number + 1})}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            function deleteDoctor(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa bác sĩ này?')) {
+                    fetch(`/admin/delete-doctor/${id}`, { method: 'DELETE' })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra khi xóa bác sĩ');
+                            }
+                        });
+                }
+            }
+
+            // Search and filter functionality
+            document.getElementById('searchInput').addEventListener('input', filterDoctors);
+            document.getElementById('specialtyFilter').addEventListener('change', filterDoctors);
+            document.getElementById('statusFilter').addEventListener('change', filterDoctors);
+
+            function filterDoctors() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const specialty = document.getElementById('specialtyFilter').value;
+                const status = document.getElementById('statusFilter').value;
+                
+                const rows = document.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const doctorName = row.cells[1].textContent.toLowerCase();
+                    const doctorSpecialty = row.cells[2].textContent;
+                    const doctorStatus = row.cells[5].textContent;
+                    
+                    const matchesSearch = doctorName.includes(searchTerm);
+                    const matchesSpecialty = specialty === '' || doctorSpecialty === specialty;
+                    const matchesStatus = status === '' || doctorStatus === status;
+                    
+                    row.style.display = matchesSearch && matchesSpecialty && matchesStatus ? '' : 'none';
+                });
+            }
+        </script>
+    </th:block>
+</body>
+</html> 

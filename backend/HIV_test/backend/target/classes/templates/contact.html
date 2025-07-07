@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Liên Hệ</title>
+    <link th:href="@{/css/contact.css}" rel="stylesheet" />
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="contact-page">
+            <div class="contact-header">
+                <div class="container">
+                    <h1>Liên Hệ</h1>
+                    <p class="lead">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.</p>
+                    <a th:href="@{/}" class="btn btn-light mt-3">
+                        <i class="fas fa-arrow-left me-2"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </div>
+            <div class="container py-5">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <!-- Thông tin liên hệ -->
+                        <div class="row mb-5 text-center">
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-map-marker-alt fa-3x mb-3 feature-icon"></i>
+                                        <h3 class="h5">Địa Chỉ</h3>
+                                        <p class="mb-0">123 Đường ABC<br>Quận XYZ<br>TP. Hồ Chí Minh</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-phone fa-3x mb-3 feature-icon"></i>
+                                        <h3 class="h5">Điện Thoại</h3>
+                                        <p class="mb-0">Hotline: 1900-xxxx<br>Điện thoại: (028) xxxx-xxxx</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <i class="fas fa-envelope fa-3x mb-3 feature-icon"></i>
+                                        <h3 class="h5">Email</h3>
+                                        <p class="mb-0">info@hivcare.com<br>support@hivcare.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Form liên hệ -->
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <h2 class="h4 mb-4 text-center">Gửi Tin Nhắn Cho Chúng Tôi</h2>
+                                <form th:action="@{/contact}" method="post">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="name" class="form-label">Họ và tên</label>
+                                            <input type="text" class="form-control" id="name" name="name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label">Số điện thoại</label>
+                                            <input type="tel" class="form-control" id="phone" name="phone">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="subject" class="form-label">Chủ đề</label>
+                                            <select class="form-select" id="subject" name="subject" required>
+                                                <option value="">Chọn chủ đề</option>
+                                                <option value="appointment">Đặt lịch khám</option>
+                                                <option value="consultation">Tư vấn</option>
+                                                <option value="test">Xét nghiệm</option>
+                                                <option value="treatment">Điều trị</option>
+                                                <option value="other">Khác</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="message" class="form-label">Nội dung</label>
+                                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="privacy" required>
+                                                <label class="form-check-label" for="privacy">
+                                                    Tôi đồng ý với <a th:href="@{/privacy-policy}">chính sách bảo mật</a>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <button type="submit" class="btn btn-primary btn-lg">Gửi tin nhắn</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Giờ làm việc -->
+                        <div class="working-hours-card mt-4">
+                            <div class="working-hours-title">
+                                <i class="fa-solid fa-clock me-2"></i>Giờ Làm Việc
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <ul class="working-hours-list list-unstyled mb-0">
+                                        <li><i class="fa-solid fa-clock"></i> <strong>Thứ Hai - Thứ Sáu:</strong> 7:30 - 20:00</li>
+                                        <li><i class="fa-solid fa-clock"></i> <strong>Thứ Bảy:</strong> 7:30 - 17:00</li>
+                                        <li><i class="fa-solid fa-clock"></i> <strong>Chủ Nhật:</strong> 7:30 - 12:00</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="working-hours-note">
+                                        <strong>Lưu ý:</strong> Chúng tôi luôn sẵn sàng hỗ trợ khẩn cấp 24/7 thông qua đường dây nóng.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

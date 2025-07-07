@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Trang Chủ</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4">Chăm sóc HIV toàn diện</h1>
+                <p class="lead mb-4">Dịch vụ y tế chuyên nghiệp, bảo mật và không kỳ thị, đồng hành cùng bạn trên mọi chặng đường.</p>
+                <div th:if="${session.user}" class="mb-4">
+                    <h2 class="h4">Chào mừng, <span th:text="${session.user.fullName}"></span>!</h2>
+                    <div class="text-center mt-4">
+                        <a th:if="${session.user != null}" th:href="@{'/dashboard/' + ${#strings.toLowerCase(session.user.role)}}" class="btn btn-light me-2">
+                            <i class="fas fa-user me-2"></i>Trang cá nhân
+                        </a>
+                        <a th:if="${session.user != null}" th:href="@{/auth/logout}" class="btn btn-outline-light">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a>
+                    </div>
+                </div>
+                <div th:unless="${session.user}" class="mb-4">
+                    <a th:href="@{/auth/register}" class="btn btn-light btn-lg me-2">Đăng ký ngay</a>
+                    <a th:href="@{/auth/register-anonymous}" class="btn btn-outline-light btn-lg">Đăng ký ẩn danh</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="container my-5 py-5">
+            <div class="services-section-bg">
+                <div class="row justify-content-center text-center mb-5">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold">Dịch vụ chăm sóc toàn diện</h2>
+                        <p>Chúng tôi cung cấp đầy đủ các dịch vụ để hỗ trợ bạn trên hành trình điều trị.</p>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon bg-danger-soft">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <h4>Tư vấn và điều trị ARV</h4>
+                            <p>Cung cấp phác đồ điều trị ARV mới nhất, phù hợp với từng cá nhân.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon bg-primary-soft">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <h4>Xét nghiệm và theo dõi</h4>
+                            <p>Hệ thống xét nghiệm hiện đại giúp theo dõi tải lượng virus và chỉ số CD4.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon bg-success-soft">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <h4>Hỗ trợ ẩn danh</h4>
+                            <p>Đảm bảo quyền riêng tư và bảo mật tuyệt đối cho mọi thông tin của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="bg-light py-5">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-4">
+                        <h3 class="display-4 fw-bold text-primary">1000+</h3>
+                        <p class="lead text-muted">Lượt Khám</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h3 class="display-4 fw-bold text-primary">500+</h3>
+                        <p class="lead text-muted">Xét Nghiệm</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h3 class="display-4 fw-bold text-primary">200+</h3>
+                        <p class="lead text-muted">Điều Trị ARV</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h3 class="display-4 fw-bold text-primary">95%</h3>
+                        <p class="lead text-muted">Hài Lòng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="container my-5 py-5" th:if="${session.user == null or session.user.role == 'PATIENT'}">
+            <div class="cta-section-bg">
+                <div class="row justify-content-center text-center">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold mb-4">Khám phá về chúng tôi & dịch vụ</h2>
+                        <p class="mb-4">
+                            Trung tâm chăm sóc sức khỏe HIV cung cấp các dịch vụ toàn diện, bảo mật và tận tâm cho cộng đồng.
+                        </p>
+                        <div class="mt-4">
+                            <a th:href="@{/about}" class="btn btn-light btn-lg me-2">Tìm hiểu về chúng tôi</a>
+                            <a th:href="@{/services}" class="btn btn-outline-light btn-lg">Xem các dịch vụ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html> 

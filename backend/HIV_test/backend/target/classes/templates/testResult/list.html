@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <title>Danh sách kết quả xét nghiệm - HIV Care Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <th:block layout:fragment="css">
+      <link th:href="@{/css/test-result/test-result.css}" rel="stylesheet" />
+      <style th:inline="css">
+        .add-result-btn {
+          display: none;
+        }
+        /*[# th:if="${session.user != null && session.user.role != 'PATIENT'}"]*/
+        .add-result-btn {
+          display: inline-block;
+        }
+        /*[/]*/
+      </style>
+    </th:block>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="page-title">Danh sách kết quả xét nghiệm</h4>
+              <p class="page-subtitle">
+                Quản lý và theo dõi kết quả xét nghiệm của bệnh nhân
+              </p>
+            </div>
+            <a href="/testResult/form" class="btn btn-danger">
+              <i class="fas fa-plus-circle me-2"></i>Tạo kết quả mới
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div
+                class="stats-number"
+                id="total-tests"
+                th:text="${totalTests}"
+              >
+                0
+              </div>
+              <div class="stats-label">Tổng số xét nghiệm</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div
+                class="stats-number"
+                id="completed-tests"
+                th:text="${completedTests}"
+              >
+                0
+              </div>
+              <div class="stats-label">Đã hoàn thành</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div
+                class="stats-number"
+                id="pending-tests"
+                th:text="${pendingTests}"
+              >
+                0
+              </div>
+              <div class="stats-label">Đang chờ</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div
+                class="stats-number"
+                id="abnormal-tests"
+                th:text="${abnormalTests}"
+              >
+                0
+              </div>
+              <div class="stats-label">Bất thường</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section mb-4">
+          <form id="search-form" class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="search-input"
+                  placeholder="Tìm kiếm theo mã, tên bệnh nhân hoặc kết quả..."
+                />
+                <button class="btn btn-primary" type="submit">
+                  <i class="fas fa-search me-1"></i>Tìm kiếm
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex gap-2 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  data-sort="testDate"
+                >
+                  <i class="fas fa-calendar-alt me-1"></i>Ngày xét nghiệm
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  data-sort="status"
+                >
+                  <i class="fas fa-tasks me-1"></i>Trạng thái
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  data-sort="testType"
+                >
+                  <i class="fas fa-vial me-1"></i>Loại xét nghiệm
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Alert Container -->
+        <div id="alert-container"></div>
+
+        <!-- Test Results List -->
+        <div id="test-results-container">
+          <div th:if="${testResults == null or #lists.isEmpty(testResults)}">
+            <div class="alert alert-warning">
+              Không có kết quả xét nghiệm nào
+            </div>
+          </div>
+          <div th:each="result : ${testResults}" class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">
+                <span th:text="${result.testCode}">Mã xét nghiệm</span>
+              </h5>
+              <p class="card-text">
+                <b>Bệnh nhân:</b>
+                <span
+                  th:text="${result.patient != null && result.patient.user != null ? result.patient.user.fullName : ''}"
+                ></span>
+              </p>
+              <p class="card-text">
+                <b>Ngày xét nghiệm:</b>
+                <span
+                  th:text="${#temporals.format(result.testDate, 'dd/MM/yyyy')}"
+                ></span>
+              </p>
+              <p class="card-text">
+                <b>Loại:</b> <span th:text="${result.testType}"></span>
+              </p>
+              <p class="card-text">
+                <b>Kết quả:</b> <span th:text="${result.resultValue}"></span>
+                <span th:text="${result.unit}"></span>
+              </p>
+              <p class="card-text">
+                <b>Trạng thái:</b> <span th:text="${result.status}"></span>
+              </p>
+              <a
+                th:href="@{'/testResult/detail/' + ${result.id}}"
+                class="btn btn-info btn-sm"
+                >Xem chi tiết</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Phân trang" class="mt-4">
+          <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+      </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/js/test-result-list.js}"></script>
+      <script th:src="@{/js/user.js}"></script>
+      <script th:src="@{/js/test-result.js}"></script>
+    </th:block>
+  </body>
+</html>
