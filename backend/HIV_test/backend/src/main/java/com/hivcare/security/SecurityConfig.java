@@ -29,7 +29,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 import com.hivcare.entity.User;
+import com.hivcare.security.jwt.JwtAuthenticationEntryPoint;
+import com.hivcare.security.jwt.JwtAuthenticationFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(
+    securedEnabled = true,
+    jsr250Enabled = true,
+    prePostEnabled = true
+)
 
 public class SecurityConfig {
 
