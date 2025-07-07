@@ -1,1 +1,452 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html}">
+  <head>
+    <title
+      th:text="${appointment.patient.fullName + ' - Chi tiết lịch hẹn - HIV Care Management'}"
+    ></title>
+    <!-- CSS cho appointment -->
+    <link th:href="@{/css/appointment.css}" rel="stylesheet" />
+  </head>
+  <body>
+    <main
+      th:fragment="content"
+      class="appointment-container"
+      th:attr="data-appointment-id=${appointment.id},data-appointment-status=${appointment.status}"
+    >
+      <!-- Header Section -->
+      <div class="appointment-header">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h1>
+                <i class="fas fa-calendar-check me-3"></i>Chi tiết lịch hẹn
+              </h1>
+              <p
+                th:text="${appointment.patient.fullName + ' - ' + #temporals.format(appointment.appointmentDate, 'dd/MM/yyyy') + ' lúc ' + #temporals.format(appointment.appointmentTime, 'HH:mm')}"
+              >
+                Thông tin chi tiết lịch hẹn
+              </p>
+            </div>
+            <div class="col-md-4 text-end">
+              <a
+                th:href="@{/appointments/{id}/edit(id=${appointment.id})}"
+                class="btn btn-light btn-appointment me-2"
+              >
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa
+              </a>
+              <a
+                th:href="@{/appointments}"
+                class="btn btn-light btn-appointment"
+              >
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <!-- Thông tin chính -->
+          <div class="col-lg-8">
+            <!-- Thông tin lịch hẹn -->
+            <div class="appointment-detail-info">
+              <div class="appointment-detail-header">
+                <div class="row align-items-center">
+                  <div class="col-md-6">
+                    <h3 class="mb-2">
+                      <i class="fas fa-calendar-alt me-2"></i>Thông tin lịch hẹn
+                    </h3>
+                    <p class="mb-0">Chi tiết về lịch hẹn khám bệnh</p>
+                  </div>
+                  <div class="col-md-6 text-end">
+                    <span
+                      class="status-badge"
+                      th:class="${'status-' + #strings.toLowerCase(appointment.status)}"
+                      th:text="${appointment.status == 'SCHEDULED' ? 'Đã lên lịch' : (appointment.status == 'COMPLETED' ? 'Đã hoàn thành' : 'Đã hủy')}"
+                      >Trạng thái</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-row">
+                    <span class="info-label">
+                      <i class="fas fa-calendar me-2 text-primary"></i>Ngày hẹn:
+                    </span>
+                    <span
+                      class="info-value"
+                      th:text="${#temporals.format(appointment.appointmentDate, 'dd/MM/yyyy')}"
+                      >17/06/2024</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">
+                      <i class="fas fa-clock me-2 text-primary"></i>Giờ hẹn:
+                    </span>
+                    <span
+                      class="info-value"
+                      th:text="${#temporals.format(appointment.appointmentTime, 'HH:mm')}"
+                      >10:00</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">
+                      <i class="fas fa-stethoscope me-2 text-primary"></i>Loại
+                      hẹn:
+                    </span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.appointmentType == 'CHECKUP' ? 'Khám định kỳ' : (appointment.appointmentType == 'TEST' ? 'Xét nghiệm' : 'Tư vấn')}"
+                      >Khám định kỳ</span
+                    >
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-row">
+                    <span class="info-label">
+                      <i class="fas fa-edit me-2 text-primary"></i>Ghi chú:
+                    </span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.notes ?: 'Không có ghi chú'}"
+                      >Không có ghi chú</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">
+                      <i class="fas fa-calendar-plus me-2 text-primary"></i>Ngày
+                      tạo:
+                    </span>
+                    <span
+                      class="info-value"
+                      th:text="${#temporals.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}"
+                      >17/06/2024 09:00</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thông tin bệnh nhân và bác sĩ -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="appointment-detail-info">
+                  <h5 class="mb-3">
+                    <i class="fas fa-user me-2 text-primary"></i>Thông tin bệnh
+                    nhân
+                  </h5>
+                  <div class="info-row">
+                    <span class="info-label">Họ tên:</span>
+                    <span class="info-value">
+                      <a
+                        th:href="@{/patients/{id}(id=${appointment.patient.id})}"
+                        class="text-decoration-none"
+                      >
+                        <span th:text="${appointment.patient.fullName}"
+                          >Nguyễn Văn A</span
+                        >
+                      </a>
+                    </span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Số điện thoại:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.patient.phoneNumber}"
+                      >0123456789</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.patient.email}"
+                      >patient@example.com</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Ngày sinh:</span>
+                    <span
+                      class="info-value"
+                      th:text="${#temporals.format(appointment.patient.dateOfBirth, 'dd/MM/yyyy')}"
+                      >01/01/1990</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="appointment-detail-info">
+                  <h5 class="mb-3">
+                    <i class="fas fa-user-md me-2 text-primary"></i>Thông tin
+                    bác sĩ
+                  </h5>
+                  <div class="info-row">
+                    <span class="info-label">Họ tên:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.doctor.fullName}"
+                      >BS. Trần Văn B</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Số điện thoại:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.doctor.phoneNumber}"
+                      >0987654321</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.doctor.email}"
+                      >doctor@example.com</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Chuyên khoa:</span>
+                    <span
+                      class="info-value"
+                      th:text="${appointment.doctor.specialization}"
+                      >Nội khoa</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabs cho hồ sơ y tế và kết quả xét nghiệm -->
+            <div class="appointment-detail-info">
+              <ul class="nav nav-tabs" id="appointmentTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link active"
+                    id="medical-record-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#medical-record"
+                    type="button"
+                    role="tab"
+                  >
+                    <i class="fas fa-file-medical me-2"></i>Hồ sơ y tế
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="test-result-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#test-result"
+                    type="button"
+                    role="tab"
+                  >
+                    <i class="fas fa-vial me-2"></i>Kết quả xét nghiệm
+                  </button>
+                </li>
+              </ul>
+
+              <div class="tab-content mt-3" id="appointmentTabsContent">
+                <!-- Tab hồ sơ y tế -->
+                <div
+                  class="tab-pane fade show active"
+                  id="medical-record"
+                  role="tabpanel"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <h6 class="mb-0">Hồ sơ y tế liên quan</h6>
+                    <a
+                      th:href="@{/medical-records/new(appointmentId=${appointment.id})}"
+                      class="btn btn-appointment btn-appointment-primary btn-sm"
+                    >
+                      <i class="fas fa-plus me-2"></i>Tạo hồ sơ mới
+                    </a>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Ngày khám</th>
+                          <th>Chẩn đoán</th>
+                          <th>Bác sĩ</th>
+                          <th>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="record : ${medicalRecords}">
+                          <td
+                            th:text="${#temporals.format(record.examinationDate, 'dd/MM/yyyy')}"
+                          >
+                            17/06/2024
+                          </td>
+                          <td th:text="${record.diagnosis}">Chẩn đoán</td>
+                          <td th:text="${record.doctor.fullName}">
+                            BS. Trần Văn B
+                          </td>
+                          <td>
+                            <a
+                              th:href="@{/medical-records/{id}(id=${record.id})}"
+                              class="btn btn-sm btn-outline-primary"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(medicalRecords)}">
+                          <td colspan="4" class="text-center text-muted">
+                            Không có hồ sơ y tế nào
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Tab kết quả xét nghiệm -->
+                <div class="tab-pane fade" id="test-result" role="tabpanel">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <h6 class="mb-0">Kết quả xét nghiệm liên quan</h6>
+                    <a
+                      th:href="@{/test-results/new(appointmentId=${appointment.id})}"
+                      class="btn btn-appointment btn-appointment-primary btn-sm"
+                    >
+                      <i class="fas fa-plus me-2"></i>Thêm kết quả mới
+                    </a>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Ngày xét nghiệm</th>
+                          <th>Loại xét nghiệm</th>
+                          <th>Kết quả</th>
+                          <th>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="result : ${testResults}">
+                          <td
+                            th:text="${#temporals.format(result.testDate, 'dd/MM/yyyy')}"
+                          >
+                            17/06/2024
+                          </td>
+                          <td th:text="${result.testType}">HIV Test</td>
+                          <td>
+                            <span
+                              class="badge"
+                              th:class="${result.result == 'POSITIVE' ? 'bg-danger' : 'bg-success'}"
+                              th:text="${result.result == 'POSITIVE' ? 'Dương tính' : 'Âm tính'}"
+                              >Âm tính</span
+                            >
+                          </td>
+                          <td>
+                            <a
+                              th:href="@{/test-results/{id}(id=${result.id})}"
+                              class="btn btn-sm btn-outline-primary"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(testResults)}">
+                          <td colspan="4" class="text-center text-muted">
+                            Không có kết quả xét nghiệm nào
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <!-- Actions -->
+            <div class="appointment-detail-info">
+              <h5 class="mb-3">
+                <i class="fas fa-cogs me-2 text-primary"></i>Thao tác
+              </h5>
+              <div class="d-grid gap-2">
+                <a
+                  th:href="@{/appointments/{id}/edit(id=${appointment.id})}"
+                  class="btn btn-appointment btn-appointment-primary"
+                >
+                  <i class="fas fa-edit me-2"></i>Chỉnh sửa lịch hẹn
+                </a>
+                <button
+                  type="button"
+                  class="btn btn-appointment btn-appointment-secondary"
+                  onclick="changeStatusDetail()"
+                >
+                  <i class="fas fa-exchange-alt me-2"></i>Thay đổi trạng thái
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger"
+                  onclick="deleteAppointmentDetail()"
+                >
+                  <i class="fas fa-trash me-2"></i>Xóa lịch hẹn
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="appointment-detail-info">
+              <h5 class="mb-3">
+                <i class="fas fa-chart-bar me-2 text-primary"></i>Thống kê nhanh
+              </h5>
+              <div class="row text-center">
+                <div class="col-6">
+                  <div class="border-end">
+                    <h4
+                      class="text-primary mb-1"
+                      th:text="${#lists.size(medicalRecords)}"
+                    >
+                      0
+                    </h4>
+                    <small class="text-muted">Hồ sơ y tế</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div>
+                    <h4
+                      class="text-success mb-1"
+                      th:text="${#lists.size(testResults)}"
+                    >
+                      0
+                    </h4>
+                    <small class="text-muted">Kết quả xét nghiệm</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reminder -->
+            <div class="appointment-detail-info">
+              <h5 class="mb-3">
+                <i class="fas fa-bell me-2 text-primary"></i>Nhắc nhở
+              </h5>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Lưu ý:</strong> Hãy đảm bảo bệnh nhân đến đúng giờ và
+                chuẩn bị đầy đủ hồ sơ cần thiết.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- JavaScript cho appointment -->
+    <script th:src="@{/js/appointment.js}"></script>
+  </body>
+</html>
 
