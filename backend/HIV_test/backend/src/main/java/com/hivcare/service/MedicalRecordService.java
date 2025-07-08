@@ -1,24 +1,25 @@
 package com.hivcare.service;
 
-import com.hivcare.entity.MedicalRecord;
-import com.hivcare.entity.Patient;
-import com.hivcare.entity.Doctor;
-import com.hivcare.entity.ArvProtocol;
-import com.hivcare.repository.MedicalRecordRepository;
-import com.hivcare.repository.PatientRepository;
-import com.hivcare.repository.DoctorRepository;
-import com.hivcare.repository.ArvProtocolRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.hivcare.entity.ArvProtocol;
+import com.hivcare.entity.Doctor;
+import com.hivcare.entity.MedicalRecord;
+import com.hivcare.entity.Patient;
+import com.hivcare.repository.ArvProtocolRepository;
+import com.hivcare.repository.DoctorRepository;
+import com.hivcare.repository.MedicalRecordRepository;
+import com.hivcare.repository.PatientRepository;
 
 @Service
 @Transactional
