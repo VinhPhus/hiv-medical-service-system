@@ -64,40 +64,6 @@ public class NotificationService {
         }
     }
 
-    @Async
-    public void sendAppointmentCancellation(Appointment appointment) {
-        if (!emailEnabled || appointment.isAnonymous()) {
-            return;
-        }
-
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(appointment.getPatient().getUser().getEmail());
-            message.setSubject("Hủy lịch hẹn - HIV Care Center");
-            
-            String body = String.format(
-                "Kính chào %s,\n\n" +
-                "Lịch hẹn của bạn đã được hủy:\n\n" +
-                "Mã lịch hẹn: %s\n" +
-                "Bác sĩ: %s\n" +
-                "Thời gian: %s\n\n" +
-                "Nếu bạn muốn đặt lịch hẹn mới, vui lòng liên hệ với chúng tôi.\n\n" +
-                "Trân trọng,\n" +
-                "HIV Care Center",
-                appointment.getPatient().getUser().getFullName(),
-                appointment.getAppointmentCode(),
-                appointment.getDoctor().getUser().getFullName(),
-                appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-            );
-            
-            message.setText(body);
-            mailSender.send(message);
-            
-        } catch (Exception e) {
-            System.err.println("Failed to send appointment cancellation email: " + e.getMessage());
-        }
-    }
 
     @Async
     public void sendAppointmentReminder(Appointment appointment) {
