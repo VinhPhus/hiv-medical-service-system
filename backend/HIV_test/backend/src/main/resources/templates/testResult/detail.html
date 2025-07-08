@@ -1,1 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Chi tiết kết quả xét nghiệm - HIV Care Management</title>
+    <th:block layout:fragment="css">
+        <link th:href="@{/css/test-result/test-result.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-4">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="page-title">Chi tiết kết quả xét nghiệm</h4>
+                        <p class="page-subtitle" th:text="${testResult.testCode}">Mã xét nghiệm</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/testResult/form/{id}(id=${testResult.id})}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                        </a>
+                        <a href="/testResult/form" class="btn btn-danger">
+                            <i class="fas fa-plus-circle me-2"></i>Tạo kết quả mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Result Details -->
+            <div class="row">
+                <!-- Main Information -->
+                <div class="col-md-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <!-- Patient Information -->
+                            <div class="patient-info mb-4">
+                                <h5 class="card-title mb-3">Thông tin bệnh nhân</h5>
+                                <div class="d-flex align-items-center">
+                                    <img th:src="${testResult.patient.avatarUrl != null ? testResult.patient.avatarUrl : '/img/default-avatar.png'}"
+                                         alt="Patient Avatar" class="patient-avatar me-3">
+                                    <div>
+                                        <h6 class="mb-1" th:text="${testResult.patient.user.fullName}">Tên bệnh nhân</h6>
+                                        <p class="mb-0 text-muted" th:text="${testResult.patient.patientCode}">Mã bệnh nhân</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Test Information -->
+                            <div class="test-info mb-4">
+                                <h5 class="card-title mb-3">Thông tin xét nghiệm</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Loại xét nghiệm</label>
+                                        <p class="form-control-static" th:text="${testResult.testType}">Loại xét nghiệm</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Ngày xét nghiệm</label>
+                                        <p class="form-control-static" th:text="${#temporals.format(testResult.testDate, 'dd/MM/yyyy')}">Ngày xét nghiệm</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Kết quả</label>
+                                        <p class="form-control-static" th:text="${testResult.resultValue + ' ' + testResult.unit}">Kết quả</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Khoảng tham chiếu</label>
+                                        <p class="form-control-static" th:text="${testResult.referenceRange}">Khoảng tham chiếu</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="additional-info">
+                                <h5 class="card-title mb-3">Thông tin bổ sung</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Kỹ thuật viên</label>
+                                        <p class="form-control-static" th:text="${testResult.labTechnician}">Kỹ thuật viên</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Trạng thái</label>
+                                        <span class="test-status" th:classappend="${'status-' + #strings.toLowerCase(testResult.status)}"
+                                              th:text="${testResult.status}">Trạng thái</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Ghi chú</label>
+                                        <p class="form-control-static" th:text="${testResult.notes}">Ghi chú</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-md-4">
+                    <!-- File Attachment -->
+                    <div class="card shadow-sm mb-4" th:if="${testResult.filePath != null}">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Tệp đính kèm</h5>
+                            <div class="d-grid">
+                                <a th:href="@{/testResult/download/{id}(id=${testResult.id})}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-2"></i>Tải xuống
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Lịch sử</h5>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Tạo mới</h6>
+                                        <p class="mb-0 text-muted" th:text="${#temporals.format(testResult.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                            Thời gian tạo
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item" th:if="${testResult.updatedAt != testResult.createdAt}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Cập nhật</h6>
+                                        <p class="mb-0 text-muted" th:text="${#temporals.format(testResult.updatedAt, 'dd/MM/yyyy HH:mm')}">
+                                            Thời gian cập nhật
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-4">
+                <a href="/testResult/list" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/test-result.js}"></script>
+    </th:block>
+</body>
+</html>
 
