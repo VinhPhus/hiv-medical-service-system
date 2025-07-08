@@ -17,3 +17,4 @@ INSERT IGNORE INTO doctor_schedules (id, doctor_id, day_of_week, start_time, end
 (4, 1, 'THURSDAY', '08:00:00', '17:00:00', true, 20, NOW(), NOW()),
 (5, 1, 'FRIDAY', '08:00:00', '17:00:00', true, 20, NOW(), NOW()),
 (6, 1, 'SATURDAY', '08:00:00', '12:00:00', true, 10, NOW(), NOW());
+

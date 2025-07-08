@@ -286,65 +286,6 @@ public class DashboardController {
         }
     }
 
-    @GetMapping("/staff")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
-    public String staffDashboard(Model model, HttpSession session) {
-        try {
-            logger.info("Bắt đầu xử lý staff dashboard");
-            
-            User user = getCurrentUser(session);
-            logger.info("User info: {}", user);
-            
-            // Thêm thông tin người dùng
-            model.addAttribute("user", user);
-            model.addAttribute("staffName", user.getFullName());
-
-            try {
-                // Thêm số liệu thống kê
-                List<Appointment> todayAppts = appointmentService.getTodayAppointments();
-                List<Appointment> upcomingAppts = appointmentService.getUpcomingAppointments();
-                long pendingAppointments = appointmentService.countPendingAppointments();
-                long totalTestResults = testResultService.countTotalTestResults();
-                long pendingTestResults = testResultService.countPendingTestResults();
-                List<TestResult> pendingTests = testResultService.getPendingTests();
-                List<Patient> patientsNeedingSupport = patientService.getPatientsByTreatmentStatus(Patient.TreatmentStatus.ACTIVE);
-                long totalPatients = patientService.getTotalPatients();
-
-                logger.info("Thống kê nhân viên: todayAppointments={}, upcomingAppointments={}, pendingTests={}, totalPatients={}",
-                    todayAppts != null ? todayAppts.size() : 0, 
-                    upcomingAppts != null ? upcomingAppts.size() : 0,
-                    pendingTests != null ? pendingTests.size() : 0,
-                    totalPatients);
-
-                model.addAttribute("todayAppointments", todayAppts != null ? todayAppts : Collections.emptyList());
-                model.addAttribute("upcomingAppointments", upcomingAppts != null ? upcomingAppts : Collections.emptyList());
-                model.addAttribute("pendingAppointments", pendingAppointments);
-                model.addAttribute("totalTestResults", totalTestResults);
-                model.addAttribute("pendingTestResults", pendingTestResults);
-                model.addAttribute("pendingTests", pendingTests != null ? pendingTests : Collections.emptyList());
-                model.addAttribute("patientsNeedingSupport", patientsNeedingSupport != null ? patientsNeedingSupport : Collections.emptyList());
-                model.addAttribute("totalPatients", totalPatients);
-            } catch (Exception e) {
-                logger.error("Lỗi khi lấy thống kê nhân viên: {}", e.getMessage());
-                model.addAttribute("error", "Không thể lấy thông tin. " + e.getMessage());
-                model.addAttribute("todayAppointments", Collections.emptyList());
-                model.addAttribute("upcomingAppointments", Collections.emptyList());
-                model.addAttribute("pendingAppointments", 0);
-                model.addAttribute("totalTestResults", 0);
-                model.addAttribute("pendingTestResults", 0);
-                model.addAttribute("pendingTests", Collections.emptyList());
-                model.addAttribute("patientsNeedingSupport", Collections.emptyList());
-                model.addAttribute("totalPatients", 0);
-            }
-
-            return "dashboard/staff";
-        } catch (Exception e) {
-            logger.error("Lỗi không xác định trong staff dashboard: {}", e.getMessage());
-            logger.error("Chi tiết lỗi:", e);
-            model.addAttribute("error", "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.");
-            return "error/500";
-        }
-    }
 
     @GetMapping("/patient")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
